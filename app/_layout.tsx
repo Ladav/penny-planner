@@ -1,9 +1,42 @@
-import { Stack } from "expo-router";
+import TabBarIcon from "@/components/tab-bar-icon";
+import { Tabs } from "expo-router";
 
-export default function RootLayout() {
+export default function TabsLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="index" />
-    </Stack>
+    <Tabs screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "home" : "home-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="groups"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "people" : "people-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name={focused ? "settings" : "settings-outline"}
+              color={color}
+            />
+          ),
+        }}
+      />
+    </Tabs>
   );
 }
