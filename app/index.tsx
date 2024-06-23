@@ -2,7 +2,7 @@ import BasicCard from "@/components/basic-card";
 import { Ionicons } from "@expo/vector-icons";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 
-const recentlyUpdatedGroups = [
+const RecentlyUpdatedGroups = [
   { title: "Home", value: 100 },
   { title: "Work", value: 80 },
   { title: "Travel", value: 70 },
@@ -10,10 +10,42 @@ const recentlyUpdatedGroups = [
   { title: "Entertainment", value: 50 },
 ];
 
+const RecentTransactions = [
+  {
+    id: 0,
+    title: "Groceries",
+    amount: 100,
+    date: "2022-01-01",
+  },
+  {
+    id: 1,
+    title: "Rent",
+    amount: 200,
+    date: "2022-01-02",
+  },
+  {
+    id: 2,
+    title: "Gas",
+    amount: 300,
+    date: "2022-01-03",
+  },
+  {
+    id: 3,
+    title: "Breakfast",
+    amount: 400,
+    date: "2022-01-04",
+  },
+  {
+    id: 4,
+    title: "Dinner",
+    amount: 400,
+    date: "2022-01-05",
+  },
+];
+
 export default function Home() {
   return (
     <View style={styles.container}>
-      {/* Header Section */}
       <View style={styles.headerContainer}>
         <Ionicons name="person-outline" size={30} color="grey" />
         <View style={styles.headerNewGroupContainer}>
@@ -26,7 +58,6 @@ export default function Home() {
           <Text style={styles.headerNewGroupText}>New Group</Text>
         </View>
       </View>
-      {/* Main Section */}
       <View style={styles.mainContainer}>
         <View style={styles.totalExpenseContainer}>
           <Text style={styles.totalExpenseText}>Total Expenses This Month</Text>
@@ -46,11 +77,10 @@ export default function Home() {
         </View>
         <Text style={styles.quickAccessText}>Quick Access</Text>
         <FlatList
-          data={recentlyUpdatedGroups}
+          data={RecentlyUpdatedGroups}
           horizontal
           scrollEnabled
-          style={{height: 86}}
-          contentContainerStyle={styles.quickAccessContainer}
+          style={styles.quickAccessList}
           renderItem={({ item }) => (
             <BasicCard
               title={item.title}
@@ -59,6 +89,20 @@ export default function Home() {
             />
           )}
           keyExtractor={(item) => item.title}
+        />
+        <Text style={styles.recentTransactionText}>All Transactions</Text>
+        <FlatList
+          data={RecentTransactions}
+          scrollEnabled
+          style={styles.recentTransactionsList}
+          renderItem={({ item }) => (
+            <BasicCard
+              title={item.title}
+              value={item.amount}
+              cardStyles={styles.recentTransactionsItem}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
         />
       </View>
     </View>
@@ -127,14 +171,30 @@ const styles = StyleSheet.create({
     color: "#007aff",
     marginTop: 16,
   },
-  quickAccessContainer: {
-    height: 86,
-    marginTop: 16,
+  quickAccessList: {
+    flexGrow: 0,
+    flexShrink: 0,
+    paddingVertical: 16,
   },
   quickAccessItem: {
     paddingVertical: 16,
     paddingHorizontal: 24,
-    marginRight: 16,
     borderRadius: 16,
+    marginRight: 16,
+  },
+  recentTransactionText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#007aff",
+    marginTop: 16,
+  },
+  recentTransactionsList: {
+    marginTop: 16,
+  },
+  recentTransactionsItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 16,
+    marginBottom: 16,
   },
 });
