@@ -1,38 +1,21 @@
-import TabBarIcon from "@/components/tab-bar-icon";
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-export default function TabsLayout() {
+export default function Layout() {
   const insets = useSafeAreaInsets();
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar style="auto" />
-      <Tabs screenOptions={{ tabBarShowLabel: false, headerShown: false }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "home" : "home-outline"}
-                color={color}
-              />
-            ),
-          }}
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="create-group-modal"
+          options={{ presentation: "modal", headerShown: false }}
         />
-        <Tabs.Screen
-          name="groups"
-          options={{
-            tabBarIcon: ({ color, focused }) => (
-              <TabBarIcon
-                name={focused ? "people" : "people-outline"}
-                color={color}
-              />
-            ),
-          }}
-        />
-      </Tabs>
+      </Stack>
     </View>
   );
 }

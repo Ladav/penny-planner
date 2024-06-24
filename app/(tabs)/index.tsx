@@ -1,6 +1,7 @@
 import BasicCard from "@/components/basic-card";
 import { Ionicons } from "@expo/vector-icons";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Link } from "expo-router";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 const RecentlyUpdatedGroups = [
   { title: "Home", value: 100 },
@@ -49,12 +50,16 @@ export default function Home() {
       <View style={styles.headerContainer}>
         <Ionicons name="person-outline" size={30} color="grey" />
         <View style={styles.headerNewGroupContainer}>
-          <Ionicons
-            name="add-circle"
-            size={30}
-            color="grey"
-            style={styles.headerNewGroupIcon}
-          />
+          <Link href="/create-group-modal" asChild>
+            <Pressable>
+              <Ionicons
+                name="add-circle-outline"
+                size={30}
+                color="grey"
+                style={styles.headerNewGroupIcon}
+              />
+            </Pressable>
+          </Link>
           <Text style={styles.headerNewGroupText}>New Group</Text>
         </View>
       </View>
