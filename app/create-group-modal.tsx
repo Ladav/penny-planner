@@ -1,3 +1,5 @@
+import DateTimePicker from "@/components/date-time-picker";
+import NumberInput from "@/components/number-input";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -31,17 +33,12 @@ export default function CreateGroupModal() {
           </View>
           <Text style={styles.headerText}>Create Group</Text>
         </View>
-        <View>
-          <Text>Title</Text>
-          <TextInput placeholder="Title" />
-          <Text>Amount</Text>
-          <TextInput placeholder="Amount" />
-          <View>
-            <Text>Date</Text>
-            <TextInput placeholder="Date" />
-            <Text>Time</Text>
-            <TextInput placeholder="Time" />
-          </View>
+        <View style={styles.formContainer}>
+          <Text style={styles.formText}>Title</Text>
+          <TextInput style={styles.formInput} placeholder="Title" />
+          <Text style={styles.formText}>Amount</Text>
+          <NumberInput style={styles.formInput} placeholder="Amount" />
+          <DateTimePicker />
         </View>
       </View>
     </Modal>
@@ -66,5 +63,35 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  formContainer: {
+    padding: 16,
+  },
+  formText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  formInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 8,
+    marginBottom: 8,
+    borderRadius: 4,
+  },
+  datePickerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  datePickerText: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  datePickerInput: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 8,
+    marginBottom: 8,
+    borderRadius: 4,
   },
 });
