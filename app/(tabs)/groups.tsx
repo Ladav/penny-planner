@@ -1,51 +1,23 @@
 import BasicCard from "@/components/basic-card";
+import { ExpenseGroupWithTotal } from "@/types/db.types";
+import { getAllExpenseGroupsWithTotalExpenses } from "@/utils/db";
 import { Ionicons } from "@expo/vector-icons";
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-const GroupsData = [
-  {
-    name: "Group 1",
-    members: [
-      { name: "John", status: "active" },
-      { name: "Jane", status: "active" },
-      { name: "Bob", status: "active" },
-    ],
-    total: 1000,
-    youOwed: 900,
-  },
-  {
-    name: "Group 2",
-    members: [
-      { name: "John", status: "active" },
-      { name: "Jane", status: "active" },
-      { name: "Bob", status: "active" },
-    ],
-    total: 1000,
-    youOwed: 900,
-  },
-  {
-    name: "Group 3",
-    members: [
-      { name: "John", status: "active" },
-      { name: "Jane", status: "active" },
-      { name: "Bob", status: "active" },
-    ],
-    total: 1000,
-    youOwed: 900,
-  },
-  {
-    name: "Group 4",
-    members: [
-      { name: "John", status: "active" },
-      { name: "Jane", status: "active" },
-      { name: "Bob", status: "active" },
-    ],
-    total: 1000,
-    youOwed: 900,
-  },
-];
-
 export default function Groups() {
+  const db = useSQLiteContext();
+  const [groups, setGroups] = useState<ExpenseGroupWithTotal[]>([]);
+
+  useEffect(() => {
+    async function setup() {
+      const result = await getAllExpenseGroupsWithTotalExpenses(db);
+      setGroups(result);
+    }
+    setup();
+  }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContianer}>
@@ -102,13 +74,13 @@ export default function Groups() {
       </Text>
 
       <FlatList
-        data={GroupsData}
+        data={groups}
         scrollEnabled
         style={styles.groupList}
         renderItem={({ item }) => (
           <BasicCard
             title={item.name}
-            value={item.youOwed}
+            value={item.totalExpense}
             cardStyles={styles.groupItem}
           />
         )}

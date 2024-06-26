@@ -2,6 +2,18 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SQLiteProvider } from "expo-sqlite";
+import { Suspense } from "react";
+import { Text } from "react-native";
+import { migrateDbIfNeeded } from "@/utils/db";
+
+function Fallback() {
+  return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
@@ -9,13 +21,21 @@ export default function Layout() {
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <StatusBar style="auto" />
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="create-group-modal"
-          options={{ presentation: "modal", headerShown: false }}
-        />
-      </Stack>
+      <Suspense fallback={<Fallback />}>
+        <SQLiteProvider
+          databaseName="test.db"
+          onInit={migrateDbIfNeeded}
+          useSuspense
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="create-group-modal"
+              options={{ presentation: "modal", headerShown: false }}
+            />
+          </Stack>
+        </SQLiteProvider>
+      </Suspense>
     </View>
   );
 }

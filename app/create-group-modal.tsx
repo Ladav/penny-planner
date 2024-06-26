@@ -15,6 +15,23 @@ import {
 export default function CreateGroupModal() {
   const [isOpen, setIsOpen] = useState(true);
 
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [date, setDate] = useState(new Date());
+
+  const handleSubmit = () => {
+    if (title && amount && date) {
+      // setIsOpen(false);
+      alert(
+        JSON.stringify({
+          title,
+          amount,
+          date,
+        })
+      );
+    }
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -35,10 +52,31 @@ export default function CreateGroupModal() {
         </View>
         <View style={styles.formContainer}>
           <Text style={styles.formText}>Title</Text>
-          <TextInput style={styles.formInput} placeholder="Title" />
+          <TextInput
+            style={styles.formInput}
+            placeholder="Title"
+            value={title}
+            onChangeText={setTitle}
+          />
           <Text style={styles.formText}>Amount</Text>
-          <NumberInput style={styles.formInput} placeholder="Amount" />
-          <DateTimePicker />
+          <NumberInput
+            style={styles.formInput}
+            placeholder="Amount"
+            value={amount}
+            onChangeText={setAmount}
+          />
+          <DateTimePicker
+            value={date}
+            onChange={(_, selectedDate) => {
+              if (selectedDate) {
+                setDate(selectedDate);
+              }
+            }}
+          />
+
+          <Pressable onPress={handleSubmit}>
+            <Text style={styles.submitText}>Submit</Text>
+          </Pressable>
         </View>
       </View>
     </Modal>
@@ -92,6 +130,14 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 8,
     marginBottom: 8,
+    borderRadius: 4,
+  },
+  submitText: {
+    fontSize: 16,
+    padding: 8,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: "#ccc",
     borderRadius: 4,
   },
 });

@@ -1,6 +1,8 @@
 import BasicCard from "@/components/basic-card";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 const RecentlyUpdatedGroups = [
@@ -45,10 +47,22 @@ const RecentTransactions = [
 ];
 
 export default function Home() {
+  const db = useSQLiteContext();
+  const [version, setVersion] = useState("");
+  useEffect(() => {
+    async function setup() {
+      const result = await db.getFirstAsync<{ "sqlite_version()": string }>(
+        "SELECT sqlite_version()"
+      );
+      setVersion(result?.["sqlite_version()"] ?? "0");
+    }
+    setup();
+  }, []);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Ionicons name="person-outline" size={30} color="grey" />
+        <Text>SQLite version: {version}</Text>
         <View style={styles.headerNewGroupContainer}>
           <Link href="/create-group-modal" asChild>
             <Pressable>
