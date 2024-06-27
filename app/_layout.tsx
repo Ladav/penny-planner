@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SQLiteProvider } from "expo-sqlite";
 import { Suspense } from "react";
 import { Text } from "react-native";
-import { migrateDbIfNeeded } from "@/utils/db";
+import { migrateDbIfNeeded } from "@/utils/db.utils";
 
 function Fallback() {
   return (
@@ -31,6 +31,10 @@ export default function Layout() {
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen
               name="create-group-modal"
+              options={{ presentation: "modal", headerShown: false }}
+            />
+            <Stack.Screen
+              name="create-expense-modal"
               options={{ presentation: "modal", headerShown: false }}
             />
           </Stack>

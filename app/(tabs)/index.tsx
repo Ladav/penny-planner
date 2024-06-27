@@ -66,17 +66,17 @@ export default function Home() {
         <Ionicons name="person-outline" size={30} color="grey" />
         <Text>SQLite version: {version}</Text>
         <View style={styles.headerNewGroupContainer}>
-          <Link href="/create-group-modal" asChild>
-            <Pressable>
+          <Link href="/create-expense-modal" asChild>
+            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons
                 name="add-circle-outline"
                 size={30}
                 color="grey"
                 style={styles.headerNewGroupIcon}
               />
+              <Text style={styles.headerNewGroupText}>New Group</Text>
             </Pressable>
           </Link>
-          <Text style={styles.headerNewGroupText}>New Group</Text>
         </View>
       </View>
       <View style={styles.mainContainer}>

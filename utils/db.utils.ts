@@ -108,3 +108,27 @@ export const createGroup = async (db: SQLiteDatabase, name: string) => {
   );
   return result;
 };
+
+export const createExpense = async (
+  db: SQLiteDatabase,
+  data: {
+    title: string;
+    amount: number;
+    date: Date;
+    isPaid: boolean;
+    expenseGroupId: number;
+  }
+) => {
+  const result = await db.runAsync(
+    "INSERT INTO expense (title, amount, made_at, is_paid, expense_group_id, created_at, modified_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    data.title,
+    data.amount,
+    data.date.toISOString(),
+    data.isPaid,
+    data.expenseGroupId,
+    new Date().toISOString(),
+    new Date().toISOString(),
+    "SYS"
+  );
+  return result;
+};
