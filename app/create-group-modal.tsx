@@ -1,7 +1,11 @@
-import DateTimePicker from "@/components/date-time-picker";
-import NumberInput from "@/components/number-input";
+import { createGroup } from "@/utils/db.utils";
+import {
+  basicTosatAndroid,
+  commonErrorToastAndroid,
+} from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Link, useNavigation } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
   Modal,
@@ -14,21 +18,25 @@ import {
 
 export default function CreateGroupModal() {
   const [isOpen, setIsOpen] = useState(true);
-
   const [title, setTitle] = useState("");
-  const [amount, setAmount] = useState("");
-  const [date, setDate] = useState(new Date());
+
+  const navigation = useNavigation();
+  const db = useSQLiteContext();
 
   const handleSubmit = () => {
-    if (title && amount && date) {
-      // setIsOpen(false);
-      alert(
-        JSON.stringify({
-          title,
-          amount,
-          date,
+    if (title) {
+      // Save to database
+      createGroup(db, title)
+        .then(() => {
+          setIsOpen(false);
+          setTimeout(() => {
+            navigation.goBack();
+          }, 200);
+          basicTosatAndroid("Group created");
         })
-      );
+        .catch(() => {
+          commonErrorToastAndroid();
+        });
     }
   };
 
@@ -58,22 +66,6 @@ export default function CreateGroupModal() {
             value={title}
             onChangeText={setTitle}
           />
-          <Text style={styles.formText}>Amount</Text>
-          <NumberInput
-            style={styles.formInput}
-            placeholder="Amount"
-            value={amount}
-            onChangeText={setAmount}
-          />
-          <DateTimePicker
-            value={date}
-            onChange={(_, selectedDate) => {
-              if (selectedDate) {
-                setDate(selectedDate);
-              }
-            }}
-          />
-
           <Pressable onPress={handleSubmit}>
             <Text style={styles.submitText}>Submit</Text>
           </Pressable>

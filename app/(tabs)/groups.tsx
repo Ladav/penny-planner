@@ -1,38 +1,42 @@
 import BasicCard from "@/components/basic-card";
 import { ExpenseGroupWithTotal } from "@/types/db.types";
-import { getAllExpenseGroupsWithTotalExpenses } from "@/utils/db";
+import { getAllExpenseGroupsWithTotalExpenses } from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
+import { Link, useFocusEffect } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Groups() {
   const db = useSQLiteContext();
   const [groups, setGroups] = useState<ExpenseGroupWithTotal[]>([]);
 
-  useEffect(() => {
-    async function setup() {
-      const result = await getAllExpenseGroupsWithTotalExpenses(db);
-      setGroups(result);
-    }
-    setup();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      async function fetchGroups() {
+        const result = await getAllExpenseGroupsWithTotalExpenses(db);
+        setGroups(result);
+      }
+      fetchGroups();
+    }, [])
+  );
+
+  const totalExpense = groups.reduce<number>(
+    (acc, group) => acc + group.totalExpense,
+    0
+  );
+  // Todo: Get you owe from database
+  const youOwe = 0;
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContianer}>
-        <Text style={styles.headerText}>Groups & Members</Text>
-        <Pressable onPress={() => {}}>
-          <Ionicons size={24} name="add-circle-outline" />
-        </Pressable>
-      </View>
-      <View style={styles.toggleButtonContainer}>
-        <Pressable onPress={() => {}} style={styles.toggleButton}>
-          <Text style={styles.toggleButtonText}>Groups</Text>
-        </Pressable>
-        <Pressable onPress={() => {}} style={styles.toggleButton}>
-          <Text style={styles.toggleButtonText}>Members</Text>
-        </Pressable>
+        <Text style={styles.headerText}>Groups</Text>
+        <Link href="/create-group-modal" asChild>
+          <Pressable>
+            <Ionicons size={24} name="add-circle-outline" />
+          </Pressable>
+        </Link>
       </View>
       <View style={styles.statsContainer}>
         <Text style={{ fontSize: 16, fontWeight: "bold", paddingVertical: 8 }}>
@@ -50,8 +54,10 @@ export default function Groups() {
           >
             <View>
               <Text>
-                <Text style={{ fontSize: 24, fontWeight: "bold" }}>$90 </Text>/
-                $190
+                <Text style={{ fontSize: 24, fontWeight: "bold" }}>
+                  ${youOwe}{" "}
+                </Text>
+                / ${totalExpense}
               </Text>
               <Text>You owed</Text>
             </View>

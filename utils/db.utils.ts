@@ -2,7 +2,7 @@ import { Expense, ExpenseGroup } from "@/types/db.types";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
-  const DATABASE_VERSION = 1;
+  const DATABASE_VERSION = 2;
   const userVersion = await db.getFirstAsync<{
     user_version: number;
   }>("PRAGMA user_version");
@@ -58,26 +58,53 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
 
     currentDbVersion = 1;
   }
-  // if (currentDbVersion === 1) {
+
+  if (currentDbVersion === 1) {
+    await db.execAsync(`
+      ALTER TABLE expense ADD COLUMN is_paid INTEGER DEFAULT 0;
+    `);
+  }
+
+  // if (currentDbVersion === 2) {
   //   Add more migrations
   // }
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
-export const getAllExpenseGroupsWithTotalExpenses = async (db: SQLiteDatabase) => {
-    const result = await db.getAllAsync<ExpenseGroup>(
-      "SELECT * FROM expense_group"
-    );
-    const expenses = await getAllExpenses(db);
-    return result.map(group => {
-      const totalExpense = expenses.filter(expense => expense.expense_group_id === group.id).reduce((acc, expense) => acc + expense.amount, 0);
-      return { ...group, totalExpense };
-    });
+export const getAllExpenseGroups = async (db: SQLiteDatabase) => {
+  const result = await db.getAllAsync<ExpenseGroup>(
+    "SELECT * FROM expense_group"
+  );
+  return result;
 };
 
 export const getAllExpenses = async (db: SQLiteDatabase) => {
-  const result = await db.getAllAsync<Expense>(
-    "SELECT * FROM expense"
+  const result = await db.getAllAsync<Expense>("SELECT * FROM expense");
+  return result;
+};
+
+export const getAllExpenseGroupsWithTotalExpenses = async (
+  db: SQLiteDatabase
+) => {
+  const result = await db.getAllAsync<ExpenseGroup>(
+    "SELECT * FROM expense_group"
+  );
+  const expenses = await getAllExpenses(db);
+  return result.map((group) => {
+    const totalExpense = expenses
+      .filter((expense) => expense.expense_group_id === group.id)
+      .reduce((acc, expense) => acc + expense.amount, 0);
+    return { ...group, totalExpense };
+  });
+};
+
+export const createGroup = async (db: SQLiteDatabase, name: string) => {
+  const result = await db.runAsync(
+    "INSERT INTO expense_group (name, created_at, modified_at, created_by) VALUES (?, ?, ?, ?)",
+    name,
+    new Date().toISOString(),
+    new Date().toISOString(),
+    "SYS"
   );
   return result;
 };

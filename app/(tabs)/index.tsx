@@ -49,6 +49,7 @@ const RecentTransactions = [
 export default function Home() {
   const db = useSQLiteContext();
   const [version, setVersion] = useState("");
+
   useEffect(() => {
     async function setup() {
       const result = await db.getFirstAsync<{ "sqlite_version()": string }>(
@@ -58,6 +59,7 @@ export default function Home() {
     }
     setup();
   }, []);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
