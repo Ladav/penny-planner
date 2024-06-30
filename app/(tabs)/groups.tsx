@@ -1,32 +1,24 @@
+// @todo: add sorting/filters options
 import BasicCard from "@/components/basic-card";
-import { ExpenseGroupWithTotal } from "@/types/db.types";
-import { getAllExpenseGroupsWithTotalExpenses } from "@/utils/db.utils";
+import { useFocusDBQuery } from "@/hooks/use-focus-db-query";
+import {
+  getAllExpenseGroupsWithTotalExpenses,
+  getTotalExpenseUserOwes,
+} from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
-import { Link, useFocusEffect } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { useCallback, useState } from "react";
+import { Link } from "expo-router";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { sum } from "radash";
 
 export default function Groups() {
-  const db = useSQLiteContext();
-  const [groups, setGroups] = useState<ExpenseGroupWithTotal[]>([]);
-
-  useFocusEffect(
-    useCallback(() => {
-      async function fetchGroups() {
-        const result = await getAllExpenseGroupsWithTotalExpenses(db);
-        setGroups(result);
-      }
-      fetchGroups();
-    }, [])
-  );
-
-  const totalExpense = groups.reduce<number>(
-    (acc, group) => acc + group.totalExpense,
-    0
-  );
-  // Todo: Get you owe from database
-  const youOwe = 0;
+  const groupsQ = useFocusDBQuery(getAllExpenseGroupsWithTotalExpenses, {
+    defaultValue: [],
+  });
+  // @todo: use a inifinite scroll view instead of flatlist
+  const totalExpenseUserOwesQ = useFocusDBQuery(getTotalExpenseUserOwes, {
+    defaultValue: 0,
+  });
+  const totalExpense = sum(groupsQ.data!, (group) => group.totalExpense);
 
   return (
     <View style={styles.container}>
@@ -55,7 +47,7 @@ export default function Groups() {
             <View>
               <Text>
                 <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                  ${youOwe}{" "}
+                  ${totalExpenseUserOwesQ.data!}{" "}
                 </Text>
                 / ${totalExpense}
               </Text>
@@ -80,13 +72,13 @@ export default function Groups() {
       </Text>
 
       <FlatList
-        data={groups}
+        data={groupsQ.data!}
         scrollEnabled
         style={styles.groupList}
         renderItem={({ item }) => (
           <BasicCard
             title={item.name}
-            value={item.totalExpense}
+            value={item.totalExpense ?? 0}
             cardStyles={styles.groupItem}
           />
         )}

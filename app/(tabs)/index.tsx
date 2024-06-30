@@ -1,70 +1,33 @@
 import BasicCard from "@/components/basic-card";
+import { useDBQuery } from "@/hooks/use-db-query";
+import { useFocusDBQuery } from "@/hooks/use-focus-db-query";
+import {
+  getMostRecentlyUsedExpenseGroups,
+  getRecentTransactions,
+  getTotalExpenseThisMonth,
+  getTotalExpenseUserOwes,
+  getVersion,
+} from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
-const RecentlyUpdatedGroups = [
-  { title: "Home", value: 100 },
-  { title: "Work", value: 80 },
-  { title: "Travel", value: 70 },
-  { title: "Food", value: 60 },
-  { title: "Entertainment", value: 50 },
-];
-
-const RecentTransactions = [
-  {
-    id: 0,
-    title: "Groceries",
-    amount: 100,
-    date: "2022-01-01",
-  },
-  {
-    id: 1,
-    title: "Rent",
-    amount: 200,
-    date: "2022-01-02",
-  },
-  {
-    id: 2,
-    title: "Gas",
-    amount: 300,
-    date: "2022-01-03",
-  },
-  {
-    id: 3,
-    title: "Breakfast",
-    amount: 400,
-    date: "2022-01-04",
-  },
-  {
-    id: 4,
-    title: "Dinner",
-    amount: 400,
-    date: "2022-01-05",
-  },
-];
-
 export default function Home() {
-  const db = useSQLiteContext();
-  const [version, setVersion] = useState("");
-
-  useEffect(() => {
-    async function setup() {
-      const result = await db.getFirstAsync<{ "sqlite_version()": string }>(
-        "SELECT sqlite_version()"
-      );
-      setVersion(result?.["sqlite_version()"] ?? "0");
-    }
-    setup();
-  }, []);
+  const versionQ = useDBQuery(getVersion);
+  const totalExpenseThisMonthQ = useFocusDBQuery(getTotalExpenseThisMonth);
+  const totalExpenseUserOwesQ = useFocusDBQuery(getTotalExpenseUserOwes);
+  const mostRecentlyUsedExpenseGroups = useFocusDBQuery(
+    getMostRecentlyUsedExpenseGroups
+  );
+  const recentTransactionsQ = useFocusDBQuery(getRecentTransactions, {
+    params: { fromLastNDays: 7 }
+  });
 
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Ionicons name="person-outline" size={30} color="grey" />
-        <Text>SQLite version: {version}</Text>
+        <Text>SQLite version: {versionQ.data}</Text>
         <View style={styles.headerNewGroupContainer}>
           <Link href="/create-expense-modal" asChild>
             <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
@@ -74,7 +37,7 @@ export default function Home() {
                 color="grey"
                 style={styles.headerNewGroupIcon}
               />
-              <Text style={styles.headerNewGroupText}>New Group</Text>
+              <Text style={styles.headerNewGroupText}>Add Expense</Text>
             </Pressable>
           </Link>
         </View>
@@ -82,38 +45,40 @@ export default function Home() {
       <View style={styles.mainContainer}>
         <View style={styles.totalExpenseContainer}>
           <Text style={styles.totalExpenseText}>Total Expenses This Month</Text>
-          <Text style={styles.totalExpenseValue}>$ 100</Text>
+          <Text style={styles.totalExpenseValue}>
+            $ {totalExpenseThisMonthQ.data ?? 0}
+          </Text>
         </View>
         <View style={styles.balanceContainer}>
           <BasicCard
             title="You owe"
-            value={100}
+            value={totalExpenseUserOwesQ.data ?? 0}
             cardStyles={styles.balanceItem}
           />
-          <BasicCard
+          {/* <BasicCard
             title="Owes you"
             value={80}
             cardStyles={styles.balanceItem}
-          />
+          /> */}
         </View>
         <Text style={styles.quickAccessText}>Quick Access</Text>
         <FlatList
-          data={RecentlyUpdatedGroups}
+          data={mostRecentlyUsedExpenseGroups.data ?? []}
           horizontal
           scrollEnabled
           style={styles.quickAccessList}
           renderItem={({ item }) => (
             <BasicCard
-              title={item.title}
-              value={item.value}
+              title={item.name}
+              value={item.totalExpense}
               cardStyles={styles.quickAccessItem}
             />
           )}
-          keyExtractor={(item) => item.title}
+          keyExtractor={(item) => item.id.toString()}
         />
-        <Text style={styles.recentTransactionText}>All Transactions</Text>
+        <Text style={styles.recentTransactionText}>Recent Transactions</Text>
         <FlatList
-          data={RecentTransactions}
+          data={recentTransactionsQ.data ?? []}
           scrollEnabled
           style={styles.recentTransactionsList}
           renderItem={({ item }) => (

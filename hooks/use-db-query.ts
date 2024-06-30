@@ -1,17 +1,15 @@
+import { DBQueryFnType, DBQueryOptions } from "@/types/db.types";
 import { commonErrorToastAndroid } from "@/utils/toast.utils";
-import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
-import { useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
 
-export function useDBQuery<
-  Targs extends Object | string | number | undefined,
-  Rargs extends Object | string | number | undefined | null
->(
-  fn: (db: SQLiteDatabase, params?: Targs) => Promise<Rargs>,
-  options?: { params?: Targs }
+export function useDBQuery<Targs extends object | undefined, Rargs>(
+  fn: DBQueryFnType<Targs, Rargs>,
+  options?: DBQueryOptions<Targs, Rargs>
 ) {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<Rargs | null>(null);
-  const [error, setError] = useState<any>(null);
   const db = useSQLiteContext();
 
   useEffect(() => {
@@ -19,19 +17,20 @@ export function useDBQuery<
     fetchData();
   }, []);
 
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const result = await fn(db, options?.params);
+      const result = await fn(db, options?.params as Targs);
       setData(result);
+      options?.onSuccess?.(result);
     } catch (error) {
-      setError(error);
+      setError(String(error));
       console.log(String(error));
       commonErrorToastAndroid();
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [options?.onSuccess, options?.params]);
 
-  return { isLoading, data, error };
+  return { isLoading, error, data: data ?? options?.defaultValue };
 }

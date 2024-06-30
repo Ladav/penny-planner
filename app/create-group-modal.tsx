@@ -1,11 +1,8 @@
+import { useDBMutation } from "@/hooks/use-db-mutation";
 import { createGroup } from "@/utils/db.utils";
-import {
-  basicTosatAndroid,
-  commonErrorToastAndroid,
-} from "@/utils/toast.utils";
+import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useNavigation } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import {
   Modal,
@@ -19,24 +16,20 @@ import {
 export default function CreateGroupModal() {
   const [isOpen, setIsOpen] = useState(true);
   const [title, setTitle] = useState("");
-
   const navigation = useNavigation();
-  const db = useSQLiteContext();
+  const createGroupM = useDBMutation(createGroup, {
+    onSuccess: () => {
+      setIsOpen(false);
+      setTimeout(() => {
+        navigation.goBack();
+      }, 200);
+      basicTosatAndroid("Group created");
+    },
+  });
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (title) {
-      // Save to database
-      createGroup(db, title)
-        .then(() => {
-          setIsOpen(false);
-          setTimeout(() => {
-            navigation.goBack();
-          }, 200);
-          basicTosatAndroid("Group created");
-        })
-        .catch(() => {
-          commonErrorToastAndroid();
-        });
+      await createGroupM.mutate(title);
     }
   };
 

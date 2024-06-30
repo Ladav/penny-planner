@@ -1,4 +1,4 @@
-import { Expense, ExpenseGroup } from "@/types/db.types";
+import { Expense, ExpenseGroup, ExpenseGroupWithTotal } from "@/types/db.types";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
@@ -71,9 +71,48 @@ export async function migrateDbIfNeeded(db: SQLiteDatabase) {
   await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
 }
 
+export const getVersion = async (db: SQLiteDatabase) => {
+  const result = await db.getFirstAsync<{ "sqlite_version()": string }>(
+    "SELECT sqlite_version()"
+  );
+  return result?.["sqlite_version()"];
+};
+
 export const getAllExpenseGroups = async (db: SQLiteDatabase) => {
   const result = await db.getAllAsync<ExpenseGroup>(
-    "SELECT * FROM expense_group"
+    "SELECT * FROM expense_group ORDER BY name"
+  );
+  return result;
+};
+
+export const getMostRecentlyUsedExpenseGroups = async (
+  db: SQLiteDatabase,
+  options?: { limit?: number }
+) => {
+  const expenses = await db.getAllAsync<Expense>(
+    "SELECT DISTINCT(expense_group_id) as expense_group_id FROM expense ORDER BY made_at DESC LIMIT ?",
+    options?.limit || 5
+  );
+
+  // If no expenses are found, return an empty array early
+  if (expenses.length === 0) {
+    return [];
+  }
+
+  // Extract expense group IDs and join them as a comma-separated string
+  const expenseGroupIds = expenses
+    .map((expense) => expense.expense_group_id)
+    .join(",");
+
+  const result = await db.getAllAsync<
+    Pick<ExpenseGroupWithTotal, "id" | "name" | "totalExpense">
+  >(
+    `SELECT expense_group.id, expense_group.name, SUM(expense.amount) as totalExpense 
+     FROM expense_group 
+     LEFT JOIN expense ON expense_group.id = expense.expense_group_id 
+     WHERE expense.expense_group_id IN (${expenseGroupIds})
+     GROUP BY expense_group.id 
+     ORDER BY MAX(expense.made_at) DESC`
   );
   return result;
 };
@@ -86,16 +125,13 @@ export const getAllExpenses = async (db: SQLiteDatabase) => {
 export const getAllExpenseGroupsWithTotalExpenses = async (
   db: SQLiteDatabase
 ) => {
-  const result = await db.getAllAsync<ExpenseGroup>(
-    "SELECT * FROM expense_group"
+  const result = await db.getAllAsync<ExpenseGroupWithTotal>(
+    `SELECT expense_group.*, SUM(expense.amount) as totalExpense 
+    FROM expense_group
+    LEFT JOIN expense ON expense_group.id = expense.expense_group_id
+    GROUP BY expense_group.id ORDER BY expense_group.name`
   );
-  const expenses = await getAllExpenses(db);
-  return result.map((group) => {
-    const totalExpense = expenses
-      .filter((expense) => expense.expense_group_id === group.id)
-      .reduce((acc, expense) => acc + expense.amount, 0);
-    return { ...group, totalExpense };
-  });
+  return result;
 };
 
 export const createGroup = async (db: SQLiteDatabase, name: string) => {
@@ -129,6 +165,34 @@ export const createExpense = async (
     new Date().toISOString(),
     new Date().toISOString(),
     "SYS"
+  );
+  return result;
+};
+
+export const getTotalExpenseThisMonth = async (db: SQLiteDatabase) => {
+  const result = await db.getFirstAsync<{ "SUM(amount)": number | null }>(
+    "SELECT SUM(amount) FROM expense WHERE made_at >= date('now', 'start of month') AND made_at <= date('now', 'start of month', '+1 month', '-1 day')"
+  );
+  return result?.["SUM(amount)"] ?? null;
+};
+
+export const getTotalExpenseUserOwes = async (db: SQLiteDatabase) => {
+  const result = await db.getFirstAsync<{ "SUM(amount)": number | null }>(
+    "SELECT SUM(amount) FROM expense WHERE is_paid = 0"
+  );
+  return result?.["SUM(amount)"] ?? null;
+};
+
+export const getRecentTransactions = async (
+  db: SQLiteDatabase,
+  options: {
+    fromLastNDays: number;
+  }
+) => {
+  const result = await db.getAllAsync<
+    Pick<Expense, "id" | "title" | "amount" | "is_paid" | "made_at">
+  >(
+    `SELECT id, title, amount, made_at, is_paid FROM expense WHERE made_at >= date('now', '-${options.fromLastNDays} days') ORDER BY made_at DESC`
   );
   return result;
 };

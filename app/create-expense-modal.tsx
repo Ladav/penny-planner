@@ -1,17 +1,14 @@
 import Checkbox from "@/components/checkbox";
 import DateTimePicker from "@/components/date-time-picker";
 import NumberInput from "@/components/number-input";
-import { ExpenseGroup } from "@/types/db.types";
+import { useDBMutation } from "@/hooks/use-db-mutation";
+import { useDBQuery } from "@/hooks/use-db-query";
 import { createExpense, getAllExpenseGroups } from "@/utils/db.utils";
-import {
-  basicTosatAndroid,
-  commonErrorToastAndroid,
-} from "@/utils/toast.utils";
+import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import { Link, useFocusEffect, useNavigation } from "expo-router";
-import { useSQLiteContext } from "expo-sqlite";
-import { useCallback, useState } from "react";
+import { Link, useNavigation } from "expo-router";
+import { useState } from "react";
 import {
   Modal,
   Pressable,
@@ -28,39 +25,34 @@ export default function CreateExpenseModal() {
   const [date, setDate] = useState(new Date());
   const [isPaid, setIsPaid] = useState(false);
   const [expenseGroupId, setExpenseGroupId] = useState<number | null>(null);
-  const [allExpenseGroup, setAllExpenseGroup] = useState<ExpenseGroup[]>([]);
-
   const navigation = useNavigation();
-  const db = useSQLiteContext();
-
-  useFocusEffect(
-    useCallback(() => {
-      async function fetchGroups() {
-        const result = await getAllExpenseGroups(db);
-        setAllExpenseGroup(result);
+  const allExpenseGroupQ = useDBQuery(getAllExpenseGroups, {
+    onSuccess: (data) => {
+      if (data.length > 0) {
+        setExpenseGroupId(data[0].id);
       }
-      fetchGroups();
-    }, [])
-  );
+    },
+    defaultValue: [],
+  });
+  const createExpenseM = useDBMutation(createExpense, {
+    onSuccess: () => {
+      basicTosatAndroid("Expense added");
+      setIsOpen(false);
+      setTimeout(() => {
+        navigation.goBack();
+      }, 200);
+    },
+  });
 
   const handleSubmit = async () => {
     if (title && amount && date && expenseGroupId) {
-      try {
-        await createExpense(db, {
-          title,
-          amount: Number(amount),
-          date,
-          isPaid,
-          expenseGroupId,
-        });
-        basicTosatAndroid("Expense added");
-        setIsOpen(false);
-        setTimeout(() => {
-          navigation.goBack();
-        }, 200);
-      } catch (error) {
-        commonErrorToastAndroid();
-      }
+      await createExpenseM.mutate({
+        title,
+        amount: Number(amount),
+        date,
+        isPaid,
+        expenseGroupId,
+      });
     }
   };
 
@@ -116,8 +108,12 @@ export default function CreateExpenseModal() {
               selectedValue={expenseGroupId}
               onValueChange={(itemValue) => setExpenseGroupId(itemValue)}
             >
-              {allExpenseGroup.map((group) => (
-                <Picker.Item label={group.name} value={group.id} />
+              {allExpenseGroupQ.data!.map((group) => (
+                <Picker.Item
+                  key={group.id}
+                  value={group.id}
+                  label={group.name}
+                />
               ))}
             </Picker>
           </View>
