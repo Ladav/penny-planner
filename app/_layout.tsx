@@ -6,33 +6,38 @@ import { SQLiteProvider } from "expo-sqlite";
 import { Suspense } from "react";
 import { migrateDbIfNeeded } from "@/utils/db.utils";
 import Fallback from "@/components/fallback";
+import { ThemeProvider } from "@/components/theme-provider";
+
+import "../styles/global.css";
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <StatusBar style="auto" />
-      <Suspense fallback={<Fallback />}>
-        <SQLiteProvider
-          databaseName="test.db"
-          onInit={migrateDbIfNeeded}
-          useSuspense
-        >
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="create-group-modal"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-            <Stack.Screen
-              name="create-expense-modal"
-              options={{ presentation: "modal", headerShown: false }}
-            />
-          </Stack>
-        </SQLiteProvider>
-      </Suspense>
-    </View>
+    <ThemeProvider>
+      <View style={[styles.container, { paddingTop: insets.top }]}>
+        <StatusBar style="auto" />
+        <Suspense fallback={<Fallback />}>
+          <SQLiteProvider
+            databaseName="test.db"
+            onInit={migrateDbIfNeeded}
+            useSuspense
+          >
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="create-group-modal"
+                options={{ presentation: "modal", headerShown: false }}
+              />
+              <Stack.Screen
+                name="create-expense-modal"
+                options={{ presentation: "modal", headerShown: false }}
+              />
+            </Stack>
+          </SQLiteProvider>
+        </Suspense>
+      </View>
+    </ThemeProvider>
   );
 }
 
