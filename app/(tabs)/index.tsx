@@ -1,4 +1,6 @@
 import BasicCard from "@/components/basic-card";
+import ThemedText from "@/components/themed-text";
+import ThemedView from "@/components/themed-view";
 import { useDBQuery } from "@/hooks/use-db-query";
 import { useFocusDBQuery } from "@/hooks/use-focus-db-query";
 import {
@@ -10,7 +12,7 @@ import {
 } from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 
 export default function Home() {
   const versionQ = useDBQuery(getVersion);
@@ -20,53 +22,48 @@ export default function Home() {
     getMostRecentlyUsedExpenseGroups
   );
   const recentTransactionsQ = useFocusDBQuery(getRecentTransactions, {
-    params: { fromLastNDays: 7 }
+    params: { fromLastNDays: 17 },
   });
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Ionicons name="person-outline" size={30} color="grey" />
-        <Text>SQLite version: {versionQ.data}</Text>
-        <View style={styles.headerNewGroupContainer}>
-          <Link href="/create-expense-modal" asChild>
-            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
-              <Ionicons
-                name="add-circle-outline"
-                size={30}
-                color="grey"
-                style={styles.headerNewGroupIcon}
-              />
-              <Text style={styles.headerNewGroupText}>Add Expense</Text>
-            </Pressable>
-          </Link>
-        </View>
-      </View>
-      <View style={styles.mainContainer}>
-        <View style={styles.totalExpenseContainer}>
-          <Text style={styles.totalExpenseText}>Total Expenses This Month</Text>
-          <Text style={styles.totalExpenseValue}>
-            $ {totalExpenseThisMonthQ.data ?? 0}
-          </Text>
-        </View>
-        <View style={styles.balanceContainer}>
-          <BasicCard
-            title="You owe"
-            value={totalExpenseUserOwesQ.data ?? 0}
-            cardStyles={styles.balanceItem}
+    <View className="flex-1 items-center justify-center pt-4">
+      <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
+        <ThemedView className="border-secondary border-2 rounded-full p-2">
+          <Ionicons
+            name="person-outline"
+            size={30}
+            className="text-secondary"
           />
-          {/* <BasicCard
-            title="Owes you"
-            value={80}
-            cardStyles={styles.balanceItem}
-          /> */}
+        </ThemedView>
+        {/* <ThemedText>SQLite version: {versionQ.data}</ThemedText> */}
+        <Link href="/create-expense-modal" asChild>
+          <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">
+            <Ionicons
+              name="add-circle"
+              size={30}
+              className="-ml-4 color-secondary bg-primary rounded-full"
+            />
+            <ThemedText className="mr-4 font-medium">Add Expense</ThemedText>
+          </Pressable>
+        </Link>
+      </View>
+      <View className="flex-1 w-full gap-4 mt-4 px-4">
+        <View>
+          <ThemedText>Total expenses this month</ThemedText>
+          <ThemedText className="font-medium text-3xl mt-1">
+            ${(totalExpenseThisMonthQ.data ?? 110).toFixed(2)}
+          </ThemedText>
         </View>
-        <Text style={styles.quickAccessText}>Quick Access</Text>
+        <View className="w-full flex flex-row items-center justify-evenly gap-4">
+          <BasicCard title="You owe" value={totalExpenseUserOwesQ.data ?? 0} />
+          {/* <BasicCard title="Owes you" value={80} /> */}
+        </View>
+        <ThemedText className="text-xl">Quick Access</ThemedText>
         <FlatList
           data={mostRecentlyUsedExpenseGroups.data ?? []}
           horizontal
           scrollEnabled
-          style={styles.quickAccessList}
+          className=""
           renderItem={({ item }) => (
             <BasicCard
               title={item.name}
@@ -76,7 +73,7 @@ export default function Home() {
           )}
           keyExtractor={(item) => item.id.toString()}
         />
-        <Text style={styles.recentTransactionText}>Recent Transactions</Text>
+        <ThemedText className="text-xl">Recent Transactions</ThemedText>
         <FlatList
           data={recentTransactionsQ.data ?? []}
           scrollEnabled
@@ -86,6 +83,7 @@ export default function Home() {
               title={item.title}
               value={item.amount}
               cardStyles={styles.recentTransactionsItem}
+              containerClassName="pb-4"
             />
           )}
           keyExtractor={(item) => item.id.toString()}
@@ -96,79 +94,13 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 16,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 64,
-    backgroundColor: "#eee",
-  },
-  headerNewGroupContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderRadius: 4,
-    backgroundColor: "#eee",
-  },
-  headerNewGroupIcon: {
-    marginLeft: -16,
-  },
-  headerNewGroupText: {
-    marginLeft: 8,
-  },
-  mainContainer: {
-    flex: 1,
-    width: "100%",
-  },
-  totalExpenseContainer: {
-    marginTop: 16,
-  },
-  totalExpenseText: {},
-  totalExpenseValue: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#007aff",
-  },
-  balanceContainer: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 16,
-    gap: 26,
-  },
-  balanceItem: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    gap: 8,
-    borderRadius: 16,
-    flexGrow: 1,
-  },
-  quickAccessText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#007aff",
-    marginTop: 16,
-  },
-  quickAccessList: {
-    flexGrow: 0,
-    flexShrink: 0,
-    paddingVertical: 16,
-  },
   quickAccessItem: {
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 16,
     marginRight: 16,
   },
-  recentTransactionText: {
+  recentTransactionThemedText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#007aff",

@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./app/**/*.{js,jsx,ts,tsx}"],
+  content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
@@ -37,5 +37,11 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  variants: {
+    extend: {},
+  },
+  plugins: [
+    // Set a default value on the `:root` element
+    ({ addBase }) => addBase({ ":root": { "--color-primary": "255 0 0" } }),
+  ],
 };

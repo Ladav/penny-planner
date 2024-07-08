@@ -8,7 +8,12 @@ import { migrateDbIfNeeded } from "@/utils/db.utils";
 import Fallback from "@/components/fallback";
 import { ThemeProvider } from "@/components/theme-provider";
 
-import "../styles/global.css";
+import {
+  ThemeProvider as NavigationThemeProvider,
+} from "@react-navigation/native";
+
+import "../global.css";
+import { NativgationDarkTheme } from "@/utils/color-theme.utils";
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
@@ -16,24 +21,27 @@ export default function Layout() {
   return (
     <ThemeProvider>
       <View style={[styles.container, { paddingTop: insets.top }]}>
-        <StatusBar style="auto" />
+        {/* @todo: backgroundColor should be the same as the primary color and should be set using the var */}
+        <StatusBar style="light" backgroundColor="#2A0A29" />
         <Suspense fallback={<Fallback />}>
           <SQLiteProvider
             databaseName="test.db"
             onInit={migrateDbIfNeeded}
             useSuspense
           >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="create-group-modal"
-                options={{ presentation: "modal", headerShown: false }}
-              />
-              <Stack.Screen
-                name="create-expense-modal"
-                options={{ presentation: "modal", headerShown: false }}
-              />
-            </Stack>
+            <NavigationThemeProvider value={NativgationDarkTheme}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="create-group-modal"
+                  options={{ presentation: "modal", headerShown: false }}
+                />
+                <Stack.Screen
+                  name="create-expense-modal"
+                  options={{ presentation: "modal", headerShown: false }}
+                />
+              </Stack>
+            </NavigationThemeProvider>
           </SQLiteProvider>
         </Suspense>
       </View>
