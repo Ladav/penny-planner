@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import RNDateTimePicker, {
   AndroidNativeProps,
   DateTimePickerEvent,
   BaseProps,
 } from "@react-native-community/datetimepicker";
+import ThemedText from "./themed-text";
 
 export default function DateTimePicker({
   value,
@@ -57,46 +58,22 @@ export default function DateTimePicker({
           onChange={handleOnChange}
         />
       )}
-      <View style={styles.continer}>
-        <View style={styles.pickerContainer}>
-          <Text style={styles.pickerText}>Date</Text>
+      <View className="text-light border py-2 px-4 border-secondary rounded flex-row items-center justify-stretch">
+        <View className="gap-2 bg-red-500">
+          <ThemedText>Date</ThemedText>
           <Pressable onPress={showDatepicker}>
-            <Text style={styles.pickerValue}>{`${internalValue.getDate()}/${
+            <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getDate()}/${
               internalValue.getMonth() + 1
-            }/${internalValue.getFullYear()}`}</Text>
+            }/${internalValue.getFullYear()}`}</ThemedText>
           </Pressable>
         </View>
-        <View style={styles.pickerContainer}>
-          <Text style={styles.pickerText}>Time</Text>
+        <View className="gap-2">
+          <ThemedText>Time</ThemedText>
           <Pressable onPress={showTimepicker}>
-            <Text
-              style={styles.pickerValue}
-            >{`${internalValue.getHours()}:${internalValue.getMinutes()}`}</Text>
+            <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getHours()}:${internalValue.getMinutes()}`}</ThemedText>
           </Pressable>
         </View>
       </View>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  continer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  pickerContainer: {},
-  pickerText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  pickerValue: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
-    fontSize: 24,
-  },
-});

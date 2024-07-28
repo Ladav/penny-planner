@@ -1,6 +1,9 @@
 import Checkbox from "@/components/checkbox";
 import DateTimePicker from "@/components/date-time-picker";
 import NumberInput from "@/components/number-input";
+import ThemedTextInput from "@/components/themed-text-input";
+import ThemedText from "@/components/themed-text";
+import ThemedView from "@/components/themed-view";
 import { useDBMutation } from "@/hooks/use-db-mutation";
 import { useDBQuery } from "@/hooks/use-db-query";
 import { createExpense, getAllExpenseGroups } from "@/utils/db.utils";
@@ -17,6 +20,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import ThemedNumberInput from "@/components/themed-number-input";
 
 export default function CreateExpenseModal() {
   const [isOpen, setIsOpen] = useState(true);
@@ -63,32 +67,40 @@ export default function CreateExpenseModal() {
       visible={isOpen}
       onRequestClose={() => setIsOpen(false)}
     >
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerIcon}>
+      <View className="flex-1">
+        <ThemedView className="flex flex-row items-center h-16 px-4 w-full">
+          <View className="mr-4">
             <Link href="../" asChild>
               <Pressable>
-                <Ionicons name="chevron-back-outline" size={24} color="grey" />
+                <Ionicons
+                  name="chevron-back-outline"
+                  size={24}
+                  className="text-secondary"
+                />
               </Pressable>
             </Link>
           </View>
-          <Text style={styles.headerText}>Add Expense</Text>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={styles.formText}>Title</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="Title"
-            value={title}
-            onChangeText={setTitle}
-          />
-          <Text style={styles.formText}>Amount</Text>
-          <NumberInput
-            style={styles.formInput}
-            placeholder="Amount"
-            value={amount}
-            onChangeText={setAmount}
-          />
+          <ThemedText className="text-xl font-medium">Add Expense</ThemedText>
+        </ThemedView>
+        <ThemedView className="m-4 p-4 gap-4 rounded-lg shadow-lg shadow-secondary-light">
+          <View className="gap-2">
+            <ThemedText>Expense Title</ThemedText>
+            <ThemedTextInput
+              placeholder="Expense Title"
+              value={title}
+              onChangeText={setTitle}
+            />
+          </View>
+
+          <View className="gap-2">
+            <ThemedText>Amount</ThemedText>
+            <ThemedNumberInput
+              placeholder="Amount"
+              value={amount}
+              onChangeText={setAmount}
+            />
+          </View>
+
           <DateTimePicker
             value={date}
             onChange={(_, selectedDate) => {
@@ -97,6 +109,7 @@ export default function CreateExpenseModal() {
               }
             }}
           />
+          {/*
           <Checkbox
             label="Already Paid"
             checked={isPaid}
@@ -120,8 +133,8 @@ export default function CreateExpenseModal() {
 
           <Pressable onPress={handleSubmit}>
             <Text style={styles.submitText}>Submit</Text>
-          </Pressable>
-        </View>
+          </Pressable> */}
+        </ThemedView>
       </View>
     </Modal>
   );

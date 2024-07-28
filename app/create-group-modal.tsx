@@ -1,17 +1,14 @@
+import ThemedButton from "@/components/themed-button";
+import ThemedTextInput from "@/components/themed-text-input";
+import ThemedText from "@/components/themed-text";
+import ThemedView from "@/components/themed-view";
 import { useDBMutation } from "@/hooks/use-db-mutation";
 import { createGroup } from "@/utils/db.utils";
 import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Modal, Pressable, View } from "react-native";
 
 export default function CreateGroupModal() {
   const [isOpen, setIsOpen] = useState(true);
@@ -40,89 +37,35 @@ export default function CreateGroupModal() {
       visible={isOpen}
       onRequestClose={() => setIsOpen(false)}
     >
-      <View style={styles.container}>
-        <View style={styles.headerContainer}>
-          <View style={styles.headerIcon}>
+      <View className="flex-1">
+        <ThemedView className="flex flex-row items-center h-16 px-4 w-full">
+          <View className="mr-4">
             <Link href="../" asChild>
               <Pressable>
-                <Ionicons name="chevron-back-outline" size={24} color="grey" />
+                <Ionicons
+                  name="chevron-back-outline"
+                  size={24}
+                  className="text-secondary"
+                />
               </Pressable>
             </Link>
           </View>
-          <Text style={styles.headerText}>Create Group</Text>
-        </View>
-        <View style={styles.formContainer}>
-          <Text style={styles.formText}>Title</Text>
-          <TextInput
-            style={styles.formInput}
-            placeholder="Title"
+          <ThemedText className="text-xl font-medium">Create Group</ThemedText>
+        </ThemedView>
+        <ThemedView className="m-4 p-4 rounded-lg shadow-lg shadow-secondary-light">
+          <ThemedText className="mb-2">Group Name</ThemedText>
+          <ThemedTextInput
+            placeholder="Group Name"
             value={title}
             onChangeText={setTitle}
           />
-          <Pressable onPress={handleSubmit}>
-            <Text style={styles.submitText}>Submit</Text>
-          </Pressable>
-        </View>
+          <ThemedButton
+            label="Submit"
+            className="mt-4"
+            onPress={handleSubmit}
+          />
+        </ThemedView>
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  headerIcon: {
-    marginRight: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  formContainer: {
-    padding: 16,
-  },
-  formText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  formInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
-  },
-  datePickerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  datePickerText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  datePickerInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
-  },
-  submitText: {
-    fontSize: 16,
-    padding: 8,
-    marginTop: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-  },
-});

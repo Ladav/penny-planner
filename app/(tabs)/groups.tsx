@@ -7,8 +7,10 @@ import {
 } from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 import { sum } from "radash";
+import ThemedText from "@/components/themed-text";
+import { useMemo } from "react";
 
 export default function Groups() {
   const groupsQ = useFocusDBQuery(getAllExpenseGroupsWithTotalExpenses, {
@@ -20,131 +22,88 @@ export default function Groups() {
   });
   const totalExpense = sum(groupsQ.data!, (group) => group.totalExpense);
 
+  const totalExpenseUserOwesContent = useMemo(() => {
+    if (totalExpenseUserOwesQ.isLoading) {
+      return <ThemedText>Loading...</ThemedText>;
+    }
+
+    if (totalExpenseUserOwesQ.error) {
+      return <ThemedText>Error: {totalExpenseUserOwesQ.error}</ThemedText>;
+    }
+
+    if (totalExpenseUserOwesQ.data) {
+      return (
+        <>
+          <ThemedText>You owe</ThemedText>
+          <Text>
+            <ThemedText className="font-medium text-3xl">
+              ${totalExpenseUserOwesQ.data ?? 0}
+            </ThemedText>
+            <ThemedText> / ${totalExpense}</ThemedText>
+          </Text>
+        </>
+      );
+    }
+
+    return null;
+  }, [
+    totalExpenseUserOwesQ.data,
+    totalExpenseUserOwesQ.error,
+    totalExpenseUserOwesQ.isLoading,
+    totalExpense,
+  ]);
+
+  const groupsContent = useMemo(() => {
+    if (groupsQ.isLoading) {
+      return <ThemedText>Loading...</ThemedText>;
+    }
+
+    if (groupsQ.error) {
+      return <ThemedText>Error: {groupsQ.error}</ThemedText>;
+    }
+
+    if (groupsQ.data) {
+      return (
+        <>
+          <ThemedText className="text-xl">All Groups</ThemedText>
+          <FlatList
+            data={groupsQ.data!}
+            scrollEnabled
+            renderItem={({ item }) => (
+              <BasicCard
+                title={item.name}
+                value={item.totalExpense ?? 0}
+                containerClassName="pb-4"
+              />
+            )}
+            keyExtractor={(item) => item.name}
+          />
+        </>
+      );
+    }
+
+    return null;
+  }, [groupsQ.data, groupsQ.error, groupsQ.isLoading]);
+
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContianer}>
-        <Text style={styles.headerText}>Groups</Text>
+    <View className="flex-1 items-center justify-center pt-4">
+      <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
+        <ThemedText className="text-xl font-medium">Groups</ThemedText>
         <Link href="/create-group-modal" asChild>
-          <Pressable>
-            <Ionicons size={24} name="add-circle-outline" />
+          <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">
+            <Ionicons
+              name="add-circle"
+              size={30}
+              className="-ml-4 color-secondary bg-primary rounded-full"
+            />
+            <ThemedText className="mr-4 font-medium">New Group</ThemedText>
           </Pressable>
         </Link>
       </View>
-      <View style={styles.statsContainer}>
-        <Text style={{ fontSize: 16, fontWeight: "bold", paddingVertical: 8 }}>
-          Groups
-        </Text>
-        <View style={styles.statsDivider} />
-        <View>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              paddingVertical: 8,
-            }}
-          >
-            <View>
-              <Text>
-                <Text style={{ fontSize: 24, fontWeight: "bold" }}>
-                  ${totalExpenseUserOwesQ.data!}{" "}
-                </Text>
-                / ${totalExpense}
-              </Text>
-              <Text>You owed</Text>
-            </View>
-            <Pressable onPress={() => {}}>
-              <Text>Analyse</Text>
-            </Pressable>
-          </View>
-        </View>
+      <View className="flex-1 w-full gap-4 mt-4 px-4">
+        {totalExpenseUserOwesContent}
+        {groupsContent}
       </View>
-
-      <Text
-        style={{
-          fontSize: 24,
-          fontWeight: "bold",
-          paddingVertical: 8,
-          marginTop: 16,
-        }}
-      >
-        Groups
-      </Text>
-
-      <FlatList
-        data={groupsQ.data!}
-        scrollEnabled
-        style={styles.groupList}
-        renderItem={({ item }) => (
-          <BasicCard
-            title={item.name}
-            value={item.totalExpense ?? 0}
-            cardStyles={styles.groupItem}
-          />
-        )}
-        keyExtractor={(item) => item.name}
-      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  headerContianer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    height: 64,
-    backgroundColor: "#eee",
-  },
-  headerText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#007aff",
-  },
-  toggleButtonContainer: {
-    flexDirection: "row",
-    borderRadius: 16,
-    marginTop: 24,
-    width: "100%",
-    backgroundColor: "#eee",
-    gap: 16,
-  },
-  toggleButton: {
-    flexGrow: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 16,
-    borderRadius: 24,
-    backgroundColor: "#007aff",
-  },
-  toggleButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-  },
-  statsContainer: {
-    marginTop: 16,
-    padding: 8,
-    borderRadius: 16,
-    backgroundColor: "#ccc",
-  },
-  statsDivider: {
-    width: "100%",
-    height: 1,
-    backgroundColor: "#007aff",
-  },
-  groupList: {
-    marginTop: 16,
-  },
-  groupItem: {
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 16,
-    marginBottom: 16,
-  },
-});
