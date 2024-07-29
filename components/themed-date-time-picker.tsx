@@ -7,7 +7,7 @@ import RNDateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import ThemedText from "./themed-text";
 
-export default function DateTimePicker({
+export default function ThemedDateTimePicker({
   value,
   onChange,
   defaultDate,
@@ -58,8 +58,8 @@ export default function DateTimePicker({
           onChange={handleOnChange}
         />
       )}
-      <View className="text-light border py-2 px-4 border-secondary rounded flex-row items-center justify-stretch">
-        <View className="gap-2 bg-red-500">
+      <View className="text-light border py-2 px-4 border-secondary rounded flex-row items-center justify-center w-full gap-4 overflow-hidden">
+        <View className="gap-2 flex-1">
           <ThemedText>Date</ThemedText>
           <Pressable onPress={showDatepicker}>
             <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getDate()}/${
@@ -67,7 +67,7 @@ export default function DateTimePicker({
             }/${internalValue.getFullYear()}`}</ThemedText>
           </Pressable>
         </View>
-        <View className="gap-2">
+        <View className="gap-2 flex-1">
           <ThemedText>Time</ThemedText>
           <Pressable onPress={showTimepicker}>
             <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getHours()}:${internalValue.getMinutes()}`}</ThemedText>

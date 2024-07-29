@@ -1,6 +1,5 @@
-import Checkbox from "@/components/checkbox";
-import DateTimePicker from "@/components/date-time-picker";
-import NumberInput from "@/components/number-input";
+import ThemedCheckbox from "@/components/themed-checkbox";
+import ThemedDateTimePicker from "@/components/themed-date-time-picker";
 import ThemedTextInput from "@/components/themed-text-input";
 import ThemedText from "@/components/themed-text";
 import ThemedView from "@/components/themed-view";
@@ -9,18 +8,12 @@ import { useDBQuery } from "@/hooks/use-db-query";
 import { createExpense, getAllExpenseGroups } from "@/utils/db.utils";
 import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
-import { Picker } from "@react-native-picker/picker";
 import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import ThemedNumberInput from "@/components/themed-number-input";
+import { Picker } from "@react-native-picker/picker";
+import ThemedSelectOption from "@/components/themed-select-option";
 
 export default function CreateExpenseModal() {
   const [isOpen, setIsOpen] = useState(true);
@@ -101,7 +94,7 @@ export default function CreateExpenseModal() {
             />
           </View>
 
-          <DateTimePicker
+          <ThemedDateTimePicker
             value={date}
             onChange={(_, selectedDate) => {
               if (selectedDate) {
@@ -109,13 +102,22 @@ export default function CreateExpenseModal() {
               }
             }}
           />
-          {/*
-          <Checkbox
+
+          <ThemedCheckbox
             label="Already Paid"
             checked={isPaid}
             onPress={() => setIsPaid(!isPaid)}
-            constainerStyle={styles.checkboxContainer}
           />
+
+          <View>
+            <ThemedText>Expense Group</ThemedText>
+            <ThemedSelectOption
+              options={allExpenseGroupQ.data!}
+              value={expenseGroupId}
+              onChange={setExpenseGroupId}
+            />
+          </View>
+
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={expenseGroupId}
@@ -130,6 +132,7 @@ export default function CreateExpenseModal() {
               ))}
             </Picker>
           </View>
+          {/*
 
           <Pressable onPress={handleSubmit}>
             <Text style={styles.submitText}>Submit</Text>
