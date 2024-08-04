@@ -3,7 +3,6 @@ import { Picker } from "@react-native-picker/picker";
 import ThemedView from "./themed-view";
 import clsx from "clsx";
 import { themesColors } from "@/utils/color-theme.utils";
-import { useState } from "react";
 
 export default function ThemedSelectOption<T extends string | number>({
   options,
@@ -16,7 +15,6 @@ export default function ThemedSelectOption<T extends string | number>({
   onChange: (value: T | null) => void;
   className?: string;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
   return (
     <ThemedView
       className={clsx(

@@ -11,6 +11,7 @@ import { FlatList, Pressable, Text, View } from "react-native";
 import { sum } from "radash";
 import ThemedText from "@/components/themed-text";
 import { useMemo } from "react";
+import SkeletonItem from "@/components/skeleton";
 
 export default function Groups() {
   const groupsQ = useFocusDBQuery(getAllExpenseGroupsWithTotalExpenses, {
@@ -22,40 +23,16 @@ export default function Groups() {
   });
   const totalExpense = sum(groupsQ.data!, (group) => group.totalExpense);
 
-  const totalExpenseUserOwesContent = useMemo(() => {
-    if (totalExpenseUserOwesQ.isLoading) {
-      return <ThemedText>Loading...</ThemedText>;
-    }
-
-    if (totalExpenseUserOwesQ.error) {
-      return <ThemedText>Error: {totalExpenseUserOwesQ.error}</ThemedText>;
-    }
-
-    if (totalExpenseUserOwesQ.data) {
-      return (
-        <>
-          <ThemedText>You owe</ThemedText>
-          <Text>
-            <ThemedText className="font-medium text-3xl">
-              ${totalExpenseUserOwesQ.data ?? 0}
-            </ThemedText>
-            <ThemedText> / ${totalExpense}</ThemedText>
-          </Text>
-        </>
-      );
-    }
-
-    return null;
-  }, [
-    totalExpenseUserOwesQ.data,
-    totalExpenseUserOwesQ.error,
-    totalExpenseUserOwesQ.isLoading,
-    totalExpense,
-  ]);
-
   const groupsContent = useMemo(() => {
     if (groupsQ.isLoading) {
-      return <ThemedText>Loading...</ThemedText>;
+      return (
+        <FlatList
+          data={[1, 2]}
+          scrollEnabled
+          renderItem={() => <SkeletonItem className="mb-4 h-24" />}
+          keyExtractor={String}
+        />
+      );
     }
 
     if (groupsQ.error) {
@@ -64,21 +41,18 @@ export default function Groups() {
 
     if (groupsQ.data) {
       return (
-        <>
-          <ThemedText className="text-xl">All Groups</ThemedText>
-          <FlatList
-            data={groupsQ.data!}
-            scrollEnabled
-            renderItem={({ item }) => (
-              <BasicCard
-                title={item.name}
-                value={item.totalExpense ?? 0}
-                containerClassName="pb-4"
-              />
-            )}
-            keyExtractor={(item) => item.name}
-          />
-        </>
+        <FlatList
+          data={groupsQ.data!}
+          scrollEnabled
+          renderItem={({ item }) => (
+            <BasicCard
+              title={item.name}
+              value={item.totalExpense ?? 0}
+              containerClassName="pb-4"
+            />
+          )}
+          keyExtractor={(item) => item.name}
+        />
       );
     }
 
@@ -101,7 +75,15 @@ export default function Groups() {
         </Link>
       </View>
       <View className="flex-1 w-full gap-4 mt-4 px-4">
-        {totalExpenseUserOwesContent}
+        <ThemedText>You owe</ThemedText>
+        <Text>
+          <ThemedText className="font-medium text-3xl">
+            ${totalExpenseUserOwesQ.data ?? 0}
+          </ThemedText>
+          <ThemedText> / ${totalExpense}</ThemedText>
+        </Text>
+
+        <ThemedText className="text-xl">All Groups</ThemedText>
         {groupsContent}
       </View>
     </View>

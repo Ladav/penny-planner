@@ -1,4 +1,5 @@
 import BasicCard from "@/components/basic-card";
+import SkeletonItem from "@/components/skeleton";
 import ThemedText from "@/components/themed-text";
 import ThemedView from "@/components/themed-view";
 import { useDBQuery } from "@/hooks/use-db-query";
@@ -26,41 +27,19 @@ export default function Home() {
     params: { fromLastNDays: 17 },
   });
 
-  const totalExpenseThisMonthContent = useMemo(() => {
-    if (totalExpenseThisMonthQ.isLoading) {
-      return (
-        <>
-          <ThemedText>Total expenses this month</ThemedText>
-          <ThemedText className="font-medium text-3xl">...</ThemedText>
-        </>
-      );
-    }
-
-    if (totalExpenseThisMonthQ.error) {
-      return <ThemedText>Error: {totalExpenseThisMonthQ.error}</ThemedText>;
-    }
-
-    if (totalExpenseThisMonthQ.data) {
-      return (
-        <>
-          <ThemedText>Total expenses this month</ThemedText>
-          <ThemedText className="font-medium text-3xl">
-            ${(totalExpenseThisMonthQ.data ?? 110).toFixed(2)}
-          </ThemedText>
-        </>
-      );
-    }
-
-    return null;
-  }, [
-    totalExpenseThisMonthQ.data,
-    totalExpenseThisMonthQ.error,
-    totalExpenseThisMonthQ.isLoading,
-  ]);
-
   const quickAccessContent = useMemo(() => {
     if (mostRecentlyUsedExpenseGroups.isLoading) {
-      return <ThemedText>Loading...</ThemedText>;
+      return (
+        <FlatList
+          data={[0, 2]}
+          horizontal
+          scrollEnabled
+          className="flex-grow-0 -mb-4"
+          contentContainerClassName="gap-4"
+          renderItem={() => <SkeletonItem className="mb-4 h-24 w-24" />}
+          keyExtractor={String}
+        />
+      );
     }
 
     if (mostRecentlyUsedExpenseGroups.error) {
@@ -71,24 +50,21 @@ export default function Home() {
 
     if (mostRecentlyUsedExpenseGroups.data) {
       return (
-        <>
-          <ThemedText className="text-xl">Quick Access</ThemedText>
-          <FlatList
-            data={mostRecentlyUsedExpenseGroups.data ?? []}
-            horizontal
-            scrollEnabled
-            className="flex-grow-0 -mb-4"
-            contentContainerClassName="gap-4"
-            renderItem={({ item }) => (
-              <BasicCard
-                title={item.name}
-                value={item.totalExpense}
-                className="mb-4"
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </>
+        <FlatList
+          data={mostRecentlyUsedExpenseGroups.data ?? []}
+          horizontal
+          scrollEnabled
+          className="flex-grow-0 -mb-4"
+          contentContainerClassName="gap-4"
+          renderItem={({ item }) => (
+            <BasicCard
+              title={item.name}
+              value={item.totalExpense}
+              className="mb-4"
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
       );
     }
 
@@ -101,7 +77,14 @@ export default function Home() {
 
   const recentTransctionsContent = useMemo(() => {
     if (recentTransactionsQ.isLoading) {
-      return <ThemedText>Loading...</ThemedText>;
+      return (
+        <FlatList
+          data={[1, 2]}
+          scrollEnabled
+          renderItem={() => <SkeletonItem className="mb-4 h-24" />}
+          keyExtractor={String}
+        />
+      );
     }
 
     if (recentTransactionsQ.error) {
@@ -110,21 +93,18 @@ export default function Home() {
 
     if (recentTransactionsQ.data) {
       return (
-        <>
-          <ThemedText className="text-xl">Recent Transactions</ThemedText>
-          <FlatList
-            data={recentTransactionsQ.data ?? []}
-            scrollEnabled
-            renderItem={({ item }) => (
-              <BasicCard
-                title={item.title}
-                value={item.amount}
-                containerClassName="pb-4"
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </>
+        <FlatList
+          data={recentTransactionsQ.data ?? []}
+          scrollEnabled
+          renderItem={({ item }) => (
+            <BasicCard
+              title={item.title}
+              value={item.amount}
+              containerClassName="pb-4"
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+        />
       );
     }
 
@@ -158,11 +138,19 @@ export default function Home() {
         </Link>
       </View>
       <View className="flex-1 w-full gap-4 mt-4 px-4">
-        {totalExpenseThisMonthContent}
+        <ThemedText>Total expenses this month</ThemedText>
+        <ThemedText className="font-medium text-3xl">
+          ${(totalExpenseThisMonthQ.data ?? 0).toFixed(2)}
+        </ThemedText>
+
         <View className="w-full flex flex-row items-center justify-evenly gap-4">
           <BasicCard title="You owe" value={totalExpenseUserOwesQ.data ?? 0} />
         </View>
+
+        <ThemedText className="text-xl">Quick Access</ThemedText>
         {quickAccessContent}
+
+        <ThemedText className="text-xl">Recent Transactions</ThemedText>
         {recentTransctionsContent}
       </View>
     </View>
