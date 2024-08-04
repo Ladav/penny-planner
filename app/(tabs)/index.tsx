@@ -78,6 +78,7 @@ export default function Home() {
             horizontal
             scrollEnabled
             className="flex-grow-0 -mb-4"
+            contentContainerClassName="gap-4"
             renderItem={({ item }) => (
               <BasicCard
                 title={item.name}

@@ -10,10 +10,10 @@ import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link, useNavigation } from "expo-router";
 import { useState } from "react";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, View } from "react-native";
 import ThemedNumberInput from "@/components/themed-number-input";
-import { Picker } from "@react-native-picker/picker";
 import ThemedSelectOption from "@/components/themed-select-option";
+import ThemedButton from "@/components/themed-button";
 
 export default function CreateExpenseModal() {
   const [isOpen, setIsOpen] = useState(true);
@@ -109,7 +109,7 @@ export default function CreateExpenseModal() {
             onPress={() => setIsPaid(!isPaid)}
           />
 
-          <View>
+          <View className="gap-2">
             <ThemedText>Expense Group</ThemedText>
             <ThemedSelectOption
               options={allExpenseGroupQ.data!}
@@ -118,96 +118,9 @@ export default function CreateExpenseModal() {
             />
           </View>
 
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={expenseGroupId}
-              onValueChange={(itemValue) => setExpenseGroupId(itemValue)}
-            >
-              {allExpenseGroupQ.data!.map((group) => (
-                <Picker.Item
-                  key={group.id}
-                  value={group.id}
-                  label={group.name}
-                />
-              ))}
-            </Picker>
-          </View>
-          {/*
-
-          <Pressable onPress={handleSubmit}>
-            <Text style={styles.submitText}>Submit</Text>
-          </Pressable> */}
+          <ThemedButton label="Submit" onPress={handleSubmit} />
         </ThemedView>
       </View>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    backgroundColor: "#fff",
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  headerIcon: {
-    marginRight: 16,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  formContainer: {
-    padding: 16,
-  },
-  formText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  formInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
-  },
-  datePickerContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  datePickerText: {
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  datePickerInput: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    marginBottom: 8,
-    borderRadius: 4,
-  },
-  checkboxContainer: {
-    marginBottom: 8,
-  },
-  pickerContainer: {
-    borderWidth: 2,
-    borderColor: "#ccc",
-    marginBottom: 8,
-    borderRadius: 4,
-    backgroundColor: "#fff",
-  },
-  submitText: {
-    fontSize: 16,
-    padding: 8,
-    marginTop: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
-  },
-});

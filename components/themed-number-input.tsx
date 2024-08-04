@@ -14,6 +14,7 @@ export default function ThemedNumberInput({
         className
       )}
       placeholderClassName="text-secondary-light"
+      keyboardType="numeric"
     />
   );
 }
