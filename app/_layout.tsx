@@ -8,44 +8,50 @@ import { migrateDbIfNeeded } from "@/utils/db.utils";
 import Fallback from "@/components/fallback";
 import { ThemeProvider } from "@/components/theme-provider";
 
-import {
-  ThemeProvider as NavigationThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 
 import "../global.css";
-import { NativgationDarkTheme } from "@/utils/color-theme.utils";
+import { NativgationDarkTheme, themesColors } from "@/utils/color-theme.utils";
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
 
   return (
-    <ThemeProvider>
-      <View style={[styles.container, { paddingTop: insets.top }]}>
-        {/* @todo: backgroundColor should be the same as the primary color and should be set using the var */}
-        <StatusBar style="light" backgroundColor="#2A0A29" />
-        <Suspense fallback={<Fallback />}>
-          <SQLiteProvider
-            databaseName="test.db"
-            onInit={migrateDbIfNeeded}
-            useSuspense
-          >
-            <NavigationThemeProvider value={NativgationDarkTheme}>
-              <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen
-                  name="create-group-modal"
-                  options={{ presentation: "modal", headerShown: false }}
-                />
-                <Stack.Screen
-                  name="create-expense-modal"
-                  options={{ presentation: "modal", headerShown: false }}
-                />
-              </Stack>
-            </NavigationThemeProvider>
-          </SQLiteProvider>
-        </Suspense>
-      </View>
-    </ThemeProvider>
+    <>
+      <StatusBar
+        style="light"
+        backgroundColor={themesColors.dark["color-primary-default"]}
+      />
+      <ThemeProvider>
+        <View style={[styles.container, { paddingTop: insets.top }]}>
+          {/* @todo: backgroundColor should be the same as the primary color and should be set using the var */}
+          <Suspense fallback={<Fallback />}>
+            <SQLiteProvider
+              databaseName="test.db"
+              onInit={migrateDbIfNeeded}
+              useSuspense
+            >
+              <NavigationThemeProvider value={NativgationDarkTheme}>
+                <Stack>
+                  <Stack.Screen
+                    name="(tabs)"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="create-group-modal"
+                    options={{ presentation: "modal", headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="create-expense-modal"
+                    options={{ presentation: "modal", headerShown: false }}
+                  />
+                </Stack>
+              </NavigationThemeProvider>
+            </SQLiteProvider>
+          </Suspense>
+        </View>
+      </ThemeProvider>
+    </>
   );
 }
 
