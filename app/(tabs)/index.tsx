@@ -118,13 +118,17 @@ export default function Home() {
   return (
     <View className="flex-1 items-center justify-center pt-4">
       <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
-        <ThemedView className="border-secondary border-2 rounded-full p-2">
-          <Ionicons
-            name="person-outline"
-            size={30}
-            className="text-secondary"
-          />
-        </ThemedView>
+        <Link href="/profile" asChild>
+          <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">
+            <ThemedView className="border-secondary border-2 rounded-full p-2">
+              <Ionicons
+                name="person-outline"
+                size={30}
+                className="text-secondary"
+              />
+            </ThemedView>
+          </Pressable>
+        </Link>
         {/* <ThemedText>SQLite version: {versionQ.data}</ThemedText> */}
         <Link href="/create-expense-modal" asChild>
           <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">

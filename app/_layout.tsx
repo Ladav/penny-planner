@@ -7,11 +7,10 @@ import { Suspense } from "react";
 import { migrateDbIfNeeded } from "@/utils/db.utils";
 import Fallback from "@/components/fallback";
 import { ThemeProvider } from "@/components/theme-provider";
-
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
+import { NativgationDarkTheme, themesColors } from "@/utils/color-theme.utils";
 
 import "../global.css";
-import { NativgationDarkTheme, themesColors } from "@/utils/color-theme.utils";
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
@@ -44,6 +43,10 @@ export default function Layout() {
                   <Stack.Screen
                     name="create-expense-modal"
                     options={{ presentation: "modal", headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="profile"
+                    options={{ headerShown: false }}
                   />
                 </Stack>
               </NavigationThemeProvider>
