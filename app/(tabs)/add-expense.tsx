@@ -7,16 +7,14 @@ import { useDBMutation } from "@/hooks/use-db-mutation";
 import { useDBQuery } from "@/hooks/use-db-query";
 import { createExpense, getAllExpenseGroups } from "@/utils/db.utils";
 import { basicTosatAndroid } from "@/utils/toast.utils";
-import { Ionicons } from "@expo/vector-icons";
-import { Link, useNavigation } from "expo-router";
+import { useNavigation } from "expo-router";
 import { useState } from "react";
-import { Modal, Pressable, View } from "react-native";
+import { View } from "react-native";
 import ThemedNumberInput from "@/components/themed-number-input";
 import ThemedSelectOption from "@/components/themed-select-option";
 import ThemedButton from "@/components/themed-button";
 
-export default function CreateExpenseModal() {
-  const [isOpen, setIsOpen] = useState(true);
+export default function AddExpense() {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date());
@@ -34,7 +32,6 @@ export default function CreateExpenseModal() {
   const createExpenseM = useDBMutation(createExpense, {
     onSuccess: () => {
       basicTosatAndroid("Expense added");
-      setIsOpen(false);
       setTimeout(() => {
         navigation.goBack();
       }, 200);
@@ -54,28 +51,12 @@ export default function CreateExpenseModal() {
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent={true}
-      visible={isOpen}
-      onRequestClose={() => setIsOpen(false)}
-    >
-      <View className="flex-1">
-        <ThemedView className="flex flex-row items-center h-16 px-4 w-full">
-          <View className="mr-4">
-            <Link href="../" asChild>
-              <Pressable>
-                <Ionicons
-                  name="chevron-back-outline"
-                  size={24}
-                  className="text-secondary"
-                />
-              </Pressable>
-            </Link>
-          </View>
-          <ThemedText className="text-xl font-medium">Add Expense</ThemedText>
-        </ThemedView>
-        <ThemedView className="m-4 p-4 gap-4 rounded-lg shadow-lg shadow-secondary-light">
+    <View className="flex-1 items-center justify-center pt-4">
+      <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
+        <ThemedText className="text-2xl font-medium">Add Expense</ThemedText>
+      </View>
+      <View className="flex-1 w-full gap-4 mt-4 px-4">
+        <ThemedView className="p-4 gap-4 rounded-lg shadow-lg shadow-secondary-light">
           <View className="gap-2">
             <ThemedText>Expense Title</ThemedText>
             <ThemedTextInput
@@ -121,6 +102,6 @@ export default function CreateExpenseModal() {
           <ThemedButton label="Submit" onPress={handleSubmit} />
         </ThemedView>
       </View>
-    </Modal>
+    </View>
   );
 }

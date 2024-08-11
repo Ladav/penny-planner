@@ -37,12 +37,8 @@ export default function Layout() {
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
-                    name="create-group-modal"
-                    options={{ presentation: "modal", headerShown: false }}
-                  />
-                  <Stack.Screen
-                    name="create-expense-modal"
-                    options={{ presentation: "modal", headerShown: false }}
+                    name="add-group"
+                    options={{ headerShown: false }}
                   />
                   <Stack.Screen
                     name="profile"

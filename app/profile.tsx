@@ -21,7 +21,7 @@ export default function Profile() {
         </View>
         <ThemedText className="text-xl font-medium">Profile</ThemedText>
       </ThemedView>
-      <ScrollView>
+      <ScrollView className="w-full">
         <View className="w-full h-72 flex items-center justify-center">
           <ThemedView className="border-secondary border-2 rounded-full p-4">
             <Ionicons
@@ -56,7 +56,7 @@ export default function Profile() {
               <ThemedText className="text-secondary">+91 9876543210</ThemedText>
             </View>
           </View>
-          <ThemedText className="text-lg my-2 tracking-wide text-secondary">
+          {/* <ThemedText className="text-lg my-2 tracking-wide text-secondary">
             Data & Privary
           </ThemedText>
           <View className="flex flex-col">
@@ -82,7 +82,7 @@ export default function Profile() {
                 voluptatum.
               </ThemedText>
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
     </View>

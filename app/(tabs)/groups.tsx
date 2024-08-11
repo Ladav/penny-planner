@@ -62,8 +62,8 @@ export default function Groups() {
   return (
     <View className="flex-1 items-center justify-center pt-4">
       <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
-        <ThemedText className="text-xl font-medium">Groups</ThemedText>
-        <Link href="/create-group-modal" asChild>
+        <ThemedText className="text-2xl font-medium">Groups</ThemedText>
+        <Link href="/add-group" asChild>
           <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">
             <Ionicons
               name="add-circle"

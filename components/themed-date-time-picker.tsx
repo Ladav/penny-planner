@@ -70,7 +70,10 @@ export default function ThemedDateTimePicker({
         <View className="gap-2 flex-1">
           <ThemedText>Time</ThemedText>
           <Pressable onPress={showTimepicker}>
-            <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getHours()}:${internalValue.getMinutes()}`}</ThemedText>
+            <ThemedText className="text-light border py-2 px-4 border-secondary rounded">{`${internalValue.getHours()}:${internalValue
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}`}</ThemedText>
           </Pressable>
         </View>
       </View>

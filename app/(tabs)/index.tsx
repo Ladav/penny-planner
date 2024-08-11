@@ -2,7 +2,6 @@ import BasicCard from "@/components/basic-card";
 import SkeletonItem from "@/components/skeleton";
 import ThemedText from "@/components/themed-text";
 import ThemedView from "@/components/themed-view";
-import { useDBQuery } from "@/hooks/use-db-query";
 import { useFocusDBQuery } from "@/hooks/use-focus-db-query";
 import {
   getMostRecentlyUsedExpenseGroups,
@@ -17,7 +16,6 @@ import { useMemo } from "react";
 import { FlatList, Pressable, View } from "react-native";
 
 export default function Home() {
-  const versionQ = useDBQuery(getVersion);
   const totalExpenseThisMonthQ = useFocusDBQuery(getTotalExpenseThisMonth);
   const totalExpenseUserOwesQ = useFocusDBQuery(getTotalExpenseUserOwes);
   const mostRecentlyUsedExpenseGroups = useFocusDBQuery(
@@ -129,8 +127,7 @@ export default function Home() {
             </ThemedView>
           </Pressable>
         </Link>
-        {/* <ThemedText>SQLite version: {versionQ.data}</ThemedText> */}
-        <Link href="/create-expense-modal" asChild>
+        <Link href="/(tabs)/add-expense" asChild>
           <Pressable className="flex flex-row items-center rounded-full bg-primary-light -z-10 gap-2">
             <Ionicons
               name="add-circle"
