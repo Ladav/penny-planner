@@ -30,6 +30,11 @@ export type ExpenseGroupWithTotal = ExpenseGroup & {
   totalExpense: number;
 };
 
+export type ExpenseGroupWithTotalAndPaid = ExpenseGroup & {
+  totalExpense: number;
+  totalPaid: number;
+};
+
 export type Expense = {
   id: number;
   expense_group_id: number;

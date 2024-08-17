@@ -8,7 +8,6 @@ import {
   getRecentTransactions,
   getTotalExpenseThisMonth,
   getTotalExpenseUserOwes,
-  getVersion,
 } from "@/utils/db.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
@@ -139,10 +138,12 @@ export default function Home() {
         </Link>
       </View>
       <View className="flex-1 w-full gap-4 mt-4 px-4">
-        <ThemedText>Total expenses this month</ThemedText>
-        <ThemedText className="font-medium text-3xl">
-          ${(totalExpenseThisMonthQ.data ?? 0).toFixed(2)}
-        </ThemedText>
+        <View className="gap-2">
+          <ThemedText>Total expenses this month</ThemedText>
+          <ThemedText className="font-medium text-3xl">
+            ${(totalExpenseThisMonthQ.data ?? 0).toFixed(2)}
+          </ThemedText>
+        </View>
 
         <View className="w-full flex flex-row items-center justify-evenly gap-4">
           <BasicCard title="You owe" value={totalExpenseUserOwesQ.data ?? 0} />

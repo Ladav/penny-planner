@@ -1,4 +1,9 @@
-import { Expense, ExpenseGroup, ExpenseGroupWithTotal } from "@/types/db.types";
+import {
+  Expense,
+  ExpenseGroup,
+  ExpenseGroupWithTotal,
+  ExpenseGroupWithTotalAndPaid,
+} from "@/types/db.types";
 import { SQLiteDatabase } from "expo-sqlite";
 
 export async function migrateDbIfNeeded(db: SQLiteDatabase) {
@@ -174,6 +179,18 @@ export const getTotalExpenseThisMonth = async (db: SQLiteDatabase) => {
     "SELECT SUM(amount) FROM expense WHERE made_at >= date('now', 'start of month') AND made_at <= date('now', 'start of month', '+1 month', '-1 day')"
   );
   return result?.["SUM(amount)"] ?? null;
+};
+
+export const getAllExpenseGroupsWithTotalExpensesAndTotalPaid = async (
+  db: SQLiteDatabase
+) => {
+  const result = await db.getAllAsync<ExpenseGroupWithTotalAndPaid>(
+    `SELECT expense_group.*, SUM(expense.amount) as totalExpense, SUM(CASE WHEN expense.is_paid = 1 THEN expense.amount ELSE 0 END) as totalPaid 
+    FROM expense_group
+    LEFT JOIN expense ON expense_group.id = expense.expense_group_id
+    GROUP BY expense_group.id ORDER BY expense_group.name`
+  );
+  return result;
 };
 
 export const getTotalExpenseUserOwes = async (db: SQLiteDatabase) => {

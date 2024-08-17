@@ -9,12 +9,8 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home" : "home"}
-              color={color}
-              className="-mr-12"
-            />
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="home" color={color} className="-mr-12" />
           ),
         }}
       />
@@ -35,12 +31,16 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="groups"
         options={{
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "team" : "team"}
-              color={color}
-              className="-ml-12"
-            />
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="team" color={color} className="-ml-12" />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="statistics"
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="barchart" color={color} className="-ml-12" />
           ),
         }}
       />

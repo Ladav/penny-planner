@@ -1,19 +1,35 @@
-import { Stack } from "expo-router";
+// TODO: Add a loading screen and check if font is loading fine
+import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SQLiteProvider } from "expo-sqlite";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useFonts } from "expo-font";
 import { migrateDbIfNeeded } from "@/utils/db.utils";
 import Fallback from "@/components/fallback";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native";
 import { NativgationDarkTheme, themesColors } from "@/utils/color-theme.utils";
+import { interFontMedium } from "@/constants/font.constant";
 
 import "../global.css";
 
 export default function Layout() {
   const insets = useSafeAreaInsets();
+  const [loaded] = useFonts({
+    Inter: interFontMedium,
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
 
   return (
     <>

@@ -33,7 +33,7 @@ const darkTheme = {
   "color-overlay": "rgba(255, 255, 255, 0.1)",
 };
 
-export const themesColors: Record<string, Record<string, string>> = {
+export const themesColors = {
   light: lightTheme,
   dark: darkTheme,
 };
