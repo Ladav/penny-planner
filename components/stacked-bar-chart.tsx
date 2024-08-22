@@ -24,7 +24,9 @@ export interface StackedBarChartProps {
   data?: Array<{
     x: string;
     y1: number;
+    y1Name: string;
     y2: number;
+    y2Name: string;
   }>;
 }
 
@@ -81,38 +83,18 @@ export default function StackedBarChart({
           type: "bar",
           stack: "y",
           itemStyle: {
-            normal: {
-              color: themesColors.dark["color-secondary-default"],
-              barBorderRadius: {
-                top: 5,
-              },
-            },
-            emphasis: {
-              color: themesColors.dark["color-tertiary-light"],
-              barBorderRadius: {
-                top: 5,
-              },
-            },
+            color: themesColors.dark["color-secondary-default"],
           },
+          name: data?.[0]?.y1Name,
         },
         {
           data: data?.map((item) => item.y2),
           type: "bar",
           stack: "y",
           itemStyle: {
-            normal: {
-              color: themesColors.dark["color-tertiary-default"],
-              barBorderRadius: {
-                top: 5,
-              },
-            },
-            emphasis: {
-              color: themesColors.dark["color-tertiary-light"],
-              barBorderRadius: {
-                top: 5,
-              },
-            },
+            color: themesColors.dark["color-tertiary-default"],
           },
+          name: data?.[0]?.y2Name,
         },
       ],
       backgroundColor: themesColors.dark["color-primary-light"],

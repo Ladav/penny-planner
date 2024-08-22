@@ -18,17 +18,19 @@ export default function Statistics() {
 
   const barChartData: StackedBarChartProps["data"] = useMemo(() => {
     if (groupsQ.data) {
-      return groupsQ.data.map((group) => ({
-        x: group.name,
-        y1: Math.floor((group.totalExpense ?? 0) - (group.totalPaid ?? 0)),
-        y2: Math.floor(group.totalPaid ?? 0),
-      }));
+      return groupsQ.data
+        .filter((group) => ![0, null].includes(group.totalExpense))
+        .map((group) => ({
+          x: group.name,
+          y1: Math.floor((group.totalExpense ?? 0) - (group.totalPaid ?? 0)),
+          y1Name: "Remaining",
+          y2: group.totalPaid ?? 0,
+          y2Name: "Paid",
+        }));
     }
 
     return [];
   }, [groupsQ.data]);
-
-  console.log(barChartData);
 
   return (
     <View className="flex-1 items-center justify-center pt-4">
@@ -36,7 +38,7 @@ export default function Statistics() {
         <ThemedText className="text-2xl font-medium">Statistics</ThemedText>
       </View>
       <ScrollView className="flex-1 w-full gap-4 mt-4 px-4">
-        <ThemedView>
+        <ThemedView className="rounded-lg overflow-hidden shadow-lg shadow-secondary-light">
           <StackedBarChart
             isLoading={groupsQ.isLoading}
             error={groupsQ.error}
