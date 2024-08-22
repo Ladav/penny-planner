@@ -29,6 +29,7 @@ export default function Groups() {
         <FlatList
           data={[1, 2]}
           scrollEnabled
+          contentContainerClassName="px-4"
           renderItem={() => <SkeletonItem className="mb-4 h-24" />}
           keyExtractor={String}
         />
@@ -44,6 +45,7 @@ export default function Groups() {
         <FlatList
           data={groupsQ.data!}
           scrollEnabled
+          contentContainerClassName="px-4"
           renderItem={({ item }) => (
             <BasicCard
               title={item.name}
@@ -74,16 +76,16 @@ export default function Groups() {
           </Pressable>
         </Link>
       </View>
-      <View className="flex-1 w-full gap-4 mt-4 px-4">
-        <ThemedText>You owe</ThemedText>
-        <Text>
+      <View className="flex-1 w-full gap-4 mt-4">
+        <ThemedText className="px-4">You owe</ThemedText>
+        <Text className="px-4">
           <ThemedText className="font-medium text-3xl">
             ${totalExpenseUserOwesQ.data ?? 0}
           </ThemedText>
           <ThemedText> / ${totalExpense}</ThemedText>
         </Text>
 
-        <ThemedText className="text-xl">All Groups</ThemedText>
+        <ThemedText className="text-xl px-4">All Groups</ThemedText>
         {groupsContent}
       </View>
     </View>

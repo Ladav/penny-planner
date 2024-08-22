@@ -31,7 +31,7 @@ export default function Home() {
           data={[0, 2]}
           horizontal
           scrollEnabled
-          className="flex-grow-0 -mb-4"
+          className="flex-grow-0 -mb-4 px-4"
           contentContainerClassName="gap-4"
           renderItem={() => <SkeletonItem className="mb-4 h-24 w-24" />}
           keyExtractor={String}
@@ -52,7 +52,7 @@ export default function Home() {
           horizontal
           scrollEnabled
           className="flex-grow-0 -mb-4"
-          contentContainerClassName="gap-4"
+          contentContainerClassName="gap-4 px-4"
           renderItem={({ item }) => (
             <BasicCard
               title={item.name}
@@ -78,6 +78,7 @@ export default function Home() {
         <FlatList
           data={[1, 2]}
           scrollEnabled
+          contentContainerClassName="px-4"
           renderItem={() => <SkeletonItem className="mb-4 h-24" />}
           keyExtractor={String}
         />
@@ -93,6 +94,7 @@ export default function Home() {
         <FlatList
           data={recentTransactionsQ.data ?? []}
           scrollEnabled
+          contentContainerClassName="px-4"
           renderItem={({ item }) => (
             <BasicCard
               title={item.title}
@@ -137,22 +139,22 @@ export default function Home() {
           </Pressable>
         </Link>
       </View>
-      <View className="flex-1 w-full gap-4 mt-4 px-4">
-        <View className="gap-2">
+      <View className="flex-1 w-full gap-4 mt-4">
+        <View className="gap-2 px-4">
           <ThemedText>Total expenses this month</ThemedText>
           <ThemedText className="font-medium text-3xl">
             ${(totalExpenseThisMonthQ.data ?? 0).toFixed(2)}
           </ThemedText>
         </View>
 
-        <View className="w-full flex flex-row items-center justify-evenly gap-4">
+        <View className="w-full flex flex-row items-center justify-evenly gap-4 px-4">
           <BasicCard title="You owe" value={totalExpenseUserOwesQ.data ?? 0} />
         </View>
 
-        <ThemedText className="text-xl">Quick Access</ThemedText>
-        {quickAccessContent}
+        <ThemedText className="text-xl px-4">Quick Access</ThemedText>
+        <View>{quickAccessContent}</View>
 
-        <ThemedText className="text-xl">Recent Transactions</ThemedText>
+        <ThemedText className="text-xl px-4">Recent Transactions</ThemedText>
         {recentTransctionsContent}
       </View>
     </View>
