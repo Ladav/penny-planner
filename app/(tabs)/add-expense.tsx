@@ -8,8 +8,8 @@ import { useDBQuery } from "@/hooks/use-db-query";
 import { createExpense, getAllExpenseGroups } from "@/utils/db.utils";
 import { basicTosatAndroid } from "@/utils/toast.utils";
 import { useNavigation } from "expo-router";
-import { useState } from "react";
-import { View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import ThemedNumberInput from "@/components/themed-number-input";
 import ThemedSelectOption from "@/components/themed-select-option";
 import ThemedButton from "@/components/themed-button";
@@ -38,6 +38,20 @@ export default function AddExpense() {
     },
   });
 
+  const clearForm = useCallback(() => {
+    setTitle("");
+    setAmount("");
+    setDate(new Date());
+    setIsPaid(false);
+    setExpenseGroupId(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearForm();
+    };
+  }, [clearForm]);
+
   const handleSubmit = async () => {
     if (title && amount && date && expenseGroupId) {
       await createExpenseM.mutate({
@@ -55,53 +69,60 @@ export default function AddExpense() {
       <View className="flex flex-row items-center justify-between h-16 px-4 w-full">
         <ThemedText className="text-2xl font-medium">Add Expense</ThemedText>
       </View>
-      <View className="flex-1 w-full gap-4 mt-4 px-4">
-        <ThemedView className="p-4 gap-4 rounded-lg shadow-lg shadow-secondary-light">
-          <View className="gap-2">
-            <ThemedText>Expense Title</ThemedText>
-            <ThemedTextInput
-              placeholder="Expense Title"
-              value={title}
-              onChangeText={setTitle}
-            />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1 w-full"
+      >
+        <ScrollView>
+          <View className="flex-1 w-full gap-4 my-4 px-4">
+            <ThemedView className="p-4 gap-4 rounded-lg shadow-lg shadow-secondary-light">
+              <View className="gap-2">
+                <ThemedText>Expense Title</ThemedText>
+                <ThemedTextInput
+                  placeholder="Expense Title"
+                  value={title}
+                  onChangeText={setTitle}
+                />
+              </View>
+
+              <View className="gap-2">
+                <ThemedText>Amount</ThemedText>
+                <ThemedNumberInput
+                  placeholder="Amount"
+                  value={amount}
+                  onChangeText={setAmount}
+                />
+              </View>
+
+              <ThemedDateTimePicker
+                value={date}
+                onChange={(_, selectedDate) => {
+                  if (selectedDate) {
+                    setDate(selectedDate);
+                  }
+                }}
+              />
+
+              <ThemedCheckbox
+                label="Already Paid"
+                checked={isPaid}
+                onPress={() => setIsPaid(!isPaid)}
+              />
+
+              <View className="gap-2">
+                <ThemedText>Expense Group</ThemedText>
+                <ThemedSelectOption
+                  options={allExpenseGroupQ.data!}
+                  value={expenseGroupId}
+                  onChange={setExpenseGroupId}
+                />
+              </View>
+
+              <ThemedButton label="Submit" onPress={handleSubmit} />
+            </ThemedView>
           </View>
-
-          <View className="gap-2">
-            <ThemedText>Amount</ThemedText>
-            <ThemedNumberInput
-              placeholder="Amount"
-              value={amount}
-              onChangeText={setAmount}
-            />
-          </View>
-
-          <ThemedDateTimePicker
-            value={date}
-            onChange={(_, selectedDate) => {
-              if (selectedDate) {
-                setDate(selectedDate);
-              }
-            }}
-          />
-
-          <ThemedCheckbox
-            label="Already Paid"
-            checked={isPaid}
-            onPress={() => setIsPaid(!isPaid)}
-          />
-
-          <View className="gap-2">
-            <ThemedText>Expense Group</ThemedText>
-            <ThemedSelectOption
-              options={allExpenseGroupQ.data!}
-              value={expenseGroupId}
-              onChange={setExpenseGroupId}
-            />
-          </View>
-
-          <ThemedButton label="Submit" onPress={handleSubmit} />
-        </ThemedView>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

@@ -7,7 +7,7 @@ import { createGroup } from "@/utils/db.utils";
 import { basicTosatAndroid } from "@/utils/toast.utils";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Pressable, View } from "react-native";
 
 export default function AddGroup() {
@@ -21,6 +21,16 @@ export default function AddGroup() {
       basicTosatAndroid("Group created");
     },
   });
+
+  const clearForm = useCallback(() => {
+    setTitle("");
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      clearForm();
+    };
+  }, [clearForm]);
 
   const handleSubmit = async () => {
     if (title) {

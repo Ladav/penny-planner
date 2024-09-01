@@ -33,7 +33,7 @@ export default function Home() {
           scrollEnabled
           className="flex-grow-0 -mb-4 px-4"
           contentContainerClassName="gap-4"
-          renderItem={() => <SkeletonItem className="mb-4 h-24 w-24" />}
+          renderItem={() => <SkeletonItem className="mb-4 h-[80px] w-24" />}
           keyExtractor={String}
         />
       );
@@ -57,7 +57,7 @@ export default function Home() {
             <BasicCard
               title={item.name}
               value={item.totalExpense}
-              className="mb-4"
+              className="mb-4 h-[80px]"
             />
           )}
           keyExtractor={(item) => item.id.toString()}

@@ -72,7 +72,7 @@ export default function Groups() {
               size={30}
               className="-ml-4 color-secondary bg-primary rounded-full"
             />
-            <ThemedText className="mr-4 font-medium">New Group</ThemedText>
+            <ThemedText className="mr-4 font-medium">Add Group</ThemedText>
           </Pressable>
         </Link>
       </View>
