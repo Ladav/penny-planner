@@ -200,6 +200,22 @@ export const getTotalExpenseUserOwes = async (db: SQLiteDatabase) => {
   return result?.["SUM(amount)"] ?? null;
 };
 
+export const getTotalAmountPaidAndDueOnPerDay = async (db: SQLiteDatabase) => {
+  const result = await db.getAllAsync<{
+    date: string;
+    amountPaid: number;
+    amountDue: number;
+  }>(
+    `SELECT
+      DATE(made_at) AS date,
+      SUM(CASE WHEN is_paid = 1 THEN amount ELSE 0 END) AS amountPaid,
+      SUM(CASE WHEN is_paid = 0 THEN amount ELSE 0 END) AS amountDue
+    FROM expense
+    GROUP BY DATE(made_at);`
+  );
+  return result ?? null;
+};
+
 export const getRecentTransactions = async (
   db: SQLiteDatabase,
   options: {

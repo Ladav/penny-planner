@@ -151,11 +151,21 @@ export default function Home() {
           <BasicCard title="You owe" value={totalExpenseUserOwesQ.data ?? 0} />
         </View>
 
-        <ThemedText className="text-xl px-4">Quick Access</ThemedText>
-        <View>{quickAccessContent}</View>
+        {mostRecentlyUsedExpenseGroups.data!?.length > 0 && (
+          <>
+            <ThemedText className="text-xl px-4">Quick Access</ThemedText>
+            <View>{quickAccessContent}</View>
+          </>
+        )}
 
-        <ThemedText className="text-xl px-4">Recent Transactions</ThemedText>
-        {recentTransctionsContent}
+        {recentTransactionsQ.data!?.length > 0 && (
+          <>
+            <ThemedText className="text-xl px-4">
+              Recent Transactions
+            </ThemedText>
+            {recentTransctionsContent}
+          </>
+        )}
       </View>
     </View>
   );
